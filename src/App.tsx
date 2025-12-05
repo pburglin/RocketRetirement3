@@ -16,6 +16,7 @@ import { InvestmentsPage } from "./pages/InvestmentsPage";
 import { DashboardPage } from "./pages/DashboardPage";
 import { RetirementGoalsPage } from "./pages/RetirementGoalsPage";
 import { SimulationDashboard } from "./pages/SimulationDashboard";
+import { ReportsInsightsPage } from "./pages/ReportsInsightsPage";
 import { useAuth } from "./context/AuthContext";
 
 // Protected Route Component
@@ -124,6 +125,14 @@ function App() {
                 element={
                   <ProtectedRoute>
                     <SimulationDashboard />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/reports"
+                element={
+                  <ProtectedRoute>
+                    <ReportsInsightsPage />
                   </ProtectedRoute>
                 }
               />
