@@ -15,7 +15,6 @@ import { LiabilitiesPage } from "./pages/LiabilitiesPage";
 import { InvestmentsPage } from "./pages/InvestmentsPage";
 import { useAuth } from "./context/AuthContext";
 import {
-  LayoutDashboard,
   Wallet,
   TrendingUp,
   DollarSign,
@@ -112,7 +111,7 @@ function App() {
               <Route path="/" element={<LandingPage />} />
               <Route
                 path="/how-it-works"
-                element={<Navigate to="/#how-it-works" replace />}
+                element={<Navigate to="/\#how-it-works" replace />}
               />
               <Route path="/privacy" element={<PrivacyPolicyPage />} />
               <Route path="/faq" element={<FAQPage />} />

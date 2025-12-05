@@ -1,28 +1,5 @@
 # Project Rocket Fi - Consolidated Development Tasks
 
-## 🚨 CRITICAL BUILD ERRORS
-- [ ] Fix the following build errors:
-    ```text
-
-up to date, audited 313 packages in 558ms
-
-54 packages are looking for funding
-  run `npm fund` for details
-
-2 moderate severity vulnerabilities
-
-To address all issues (including breaking changes), run:
-  npm audit fix --force
-
-Run `npm audit` for details.
-
-> rocket-fi@0.1.0 build
-> tsc && vite build
-
-src/App.tsx(18,3): error TS6133: 'LayoutDashboard' is declared but its value is never read.
-    ```
-
-
 ## Phase 1: Project Setup & Core Architecture
 
 - [x] **Initialize Project**: Setup React with Vite and Tailwind CSS.
@@ -68,22 +45,22 @@ src/App.tsx(18,3): error TS6133: 'LayoutDashboard' is declared but its value is 
 
 _General UI Requirements for all lists below: Sort items by highest value first, make "Add New" sections collapsible, align "Back to Dashboard" button to the TOP of the page, add Filters for list items, use pastel icons for Edit/Delete._
 
-- [ ] **Income Sources**:
-  - [ ] Add field: "Income Category" (Pre-Retirement, Post-Retirement, Both).
-  - [ ] Add sub-labels: "Use generic names like Salary, Spouse Bonus".
-- [ ] **Expenses**:
-  - [ ] Rename "Expense Category" to "Retirement Category".
-  - [ ] Sort by Highest Value.
-- [ ] **Assets**:
-  - [ ] Add field: "Estimated Annual Depreciation %".
-  - [ ] Sort by Highest Value.
-- [ ] **Liabilities**:
-  - [ ] Sort by Highest Value.
-- [ ] **Investment Accounts**:
-  - [ ] **Risk Profile**: Options restricted to "Low", "Medium", "High".
-  - [ ] **Account Types**: Checking, Savings, Investment (tax advantaged), Investment (non-tax advantaged).
-  - [ ] **Fields**: Add "Estimated Annual Interest %". Rename "Provider" to "Name".
-  - [ ] **Security**: Rename "Account Number" to "Account Number (last 4 digits)" and limit input length.
+- [x] **Income Sources**:
+  - [x] Add field: "Income Category" (Pre-Retirement, Post-Retirement, Both).
+  - [x] Add sub-labels: "Use generic names like Salary, Spouse Bonus".
+- [x] **Expenses**:
+  - [x] Rename "Expense Category" to "Retirement Category".
+  - [x] Sort by Highest Value.
+- [x] **Assets**:
+  - [x] Add field: "Estimated Annual Depreciation %".
+  - [x] Sort by Highest Value.
+- [x] **Liabilities**:
+  - [x] Sort by Highest Value.
+- [x] **Investment Accounts**:
+  - [x] **Risk Profile**: Options restricted to "Low", "Medium", "High".
+  - [x] **Account Types**: Checking, Savings, Investment (tax advantaged), Investment (non-tax advantaged).
+  - [x] **Fields**: Add "Estimated Annual Interest %". Rename "Provider" to "Name".
+  - [x] **Security**: Rename "Account Number" to "Account Number (last 4 digits)" and limit input length.
 
 ## Phase 5: Dashboard & Visualization
 
