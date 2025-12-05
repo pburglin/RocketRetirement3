@@ -123,13 +123,12 @@ const [amount, setAmount] = React.useState(
 initialData?.amount?.toString() || "",
 );
 const [retirementCategory, setRetirementCategory] = React.useState<
-Expense["retirementCategory"]
-
-> (initialData?.retirementCategory || "Required");
-> const [timeframe, setTimeframe] = React.useState<Timeframe>(
-> initialData?.timeframe || "Pre and Post-Retirement",
-> );
-> const [details, setDetails] = React.useState(initialData?.details || "");
+  Expense["retirementCategory"]
+>(initialData?.retirementCategory || "Required");
+const [timeframe, setTimeframe] = React.useState<Timeframe>(
+  initialData?.timeframe || "Pre and Post-Retirement",
+);
+const [details, setDetails] = React.useState(initialData?.details || "");
 
 useEffect(() => {
 if (initialData) {

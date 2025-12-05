@@ -59,11 +59,6 @@ export const SimulationDashboard: React.FC = () => {
         const expenses = user.expenses?.reduce((s, e) => s + e.amount, 0) || 0;
         // Investment contributions are handled as transfers usually, but if user entered them as separate from surplus
         // we need to add them. The `runProjection` does this. Here we approximate.
-        const specificContribs =
-          user.investmentAccounts?.reduce(
-            (s, a) => s + a.monthlyContribution,
-            0,
-          ) || 0;
 
         // In `runProjection`, specific contributions are DEDUCTED from surplus if we assume surplus = Income - Expenses.
         // If user is diligent, Expenses don't include Savings.
@@ -139,13 +134,6 @@ export const SimulationDashboard: React.FC = () => {
       // We simulated returns based on Mean/Vol inputs, so the Sharpe is roughly (Mean - 0) / Vol
       // But let's calculate based on the actual random numbers generated for the first run to be "empirical" to the sim.
       const riskFreeRate = 0.04; // 4% assumption
-      const avgSimReturn =
-        annualReturns.reduce((a, b) => a + b, 0) / annualReturns.length;
-      const variance =
-        annualReturns.reduce((a, b) => a + Math.pow(b - avgSimReturn, 2), 0) /
-        annualReturns.length;
-      const stdDev = Math.sqrt(variance);
-      const sharpe = (avgSimReturn - riskFreeRate) / stdDev;
 
       // Max Drawdown (average of all runs or worst case?) -> Let's show Worst Case of first run for example
       // Or we can calculate Max Drawdown of the *average* path?
