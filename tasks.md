@@ -1,29 +1,5 @@
 # Project Rocket Fi - Consolidated Development Tasks
 
-## 🚨 CRITICAL BUILD ERRORS
-- [ ] Fix the following build errors:
-    ```text
-
-up to date, audited 313 packages in 467ms
-
-54 packages are looking for funding
-  run `npm fund` for details
-
-2 moderate severity vulnerabilities
-
-To address all issues (including breaking changes), run:
-  npm audit fix --force
-
-Run `npm audit` for details.
-
-> rocket-fi@0.1.0 build
-> tsc && vite build
-
-src/pages/DashboardPage.tsx(13,1): error TS6133: 'UserProfile' is declared but its value is never read.
-src/pages/DashboardPage.tsx(173,3): error TS6133: 'isNegative' is declared but its value is never read.
-    ```
-
-
 ## Phase 1: Project Setup & Core Architecture
 
 - [x] **Initialize Project**: Setup React with Vite and Tailwind CSS.
@@ -88,14 +64,14 @@ _General UI Requirements for all lists below: Sort items by highest value first,
 
 ## Phase 5: Dashboard & Visualization
 
-- [ ] **Dashboard Layout**:
-  - [ ] Create collapsible sections for Investments, Assets, Income, etc.
-  - [ ] **Headers**: Display Summary in collapsed header (e.g., "Investments (5 accounts, total $234,000)").
-  - [ ] **Icons**: Right-aligned Chevron Up/Down for state.
-- [ ] **General UI Polish**:
-  - [ ] Form Inputs: White background for dropdowns (fix transparency issues).
-  - [ ] Scroll Behavior: Scroll to top of form when "Edit" is clicked.
-  - [ ] Number Formatting: Display dollars with commas/dots, round to nearest integer (hide cents) for readability.
+- [x] **Dashboard Layout**:
+  - [x] Create collapsible sections for Investments, Assets, Income, etc.
+  - [x] **Headers**: Display Summary in collapsed header (e.g., "Investments (5 accounts, total $234,000)").
+  - [x] **Icons**: Right-aligned Chevron Up/Down for state.
+- [x] **General UI Polish**:
+  - [x] Form Inputs: White background for dropdowns (fix transparency issues).
+  - [x] Scroll Behavior: Scroll to top of form when "Edit" is clicked.
+  - [x] Number Formatting: Display dollars with commas/dots, round to nearest integer (hide cents) for readability.
 
 ## Phase 6: Calculation Engine (Retirement Goals & Simulations)
 

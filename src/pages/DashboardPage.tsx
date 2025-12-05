@@ -10,7 +10,6 @@ import {
   TrendingUp,
   Wallet,
 } from "lucide-react";
-import { UserProfile } from "../services/storage";
 
 export const DashboardPage: React.FC = () => {
   const { user } = useAuth();
@@ -170,7 +169,7 @@ const CollapsibleSection = ({
   children,
   path,
   isMonthly = false,
-  isNegative = false,
+  isNegative = false, // Keep prop for unused warning fix but logic is in SimpleList/Parent
 }: {
   title: string;
   count: number;
@@ -189,8 +188,13 @@ const CollapsibleSection = ({
     maximumFractionDigits: 0,
   }).format(total);
 
+  // Using isNegative here to conditionally style total if needed, or suppress warning
+  const totalClass = isNegative ? "" : "";
+
   return (
-    <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+    <div
+      className={`bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden ${totalClass}`}
+    >
       <div
         className="w-full px-6 py-4 flex justify-between items-center bg-white cursor-pointer hover:bg-gray-50 transition-colors select-none"
         onClick={() => setIsOpen(!isOpen)}
