@@ -14,6 +14,8 @@ import { AssetsPage } from "./pages/AssetsPage";
 import { LiabilitiesPage } from "./pages/LiabilitiesPage";
 import { InvestmentsPage } from "./pages/InvestmentsPage";
 import { DashboardPage } from "./pages/DashboardPage";
+import { RetirementGoalsPage } from "./pages/RetirementGoalsPage";
+import { SimulationDashboard } from "./pages/SimulationDashboard";
 import { useAuth } from "./context/AuthContext";
 
 // Protected Route Component
@@ -104,6 +106,24 @@ function App() {
                 element={
                   <ProtectedRoute>
                     <InvestmentsPage />
+                  </ProtectedRoute>
+                }
+              />
+
+              {/* Planning & Simulation */}
+              <Route
+                path="/goals"
+                element={
+                  <ProtectedRoute>
+                    <RetirementGoalsPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/simulations"
+                element={
+                  <ProtectedRoute>
+                    <SimulationDashboard />
                   </ProtectedRoute>
                 }
               />

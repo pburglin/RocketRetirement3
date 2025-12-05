@@ -28,19 +28,27 @@ export const Header: React.FC = () => {
               >
                 How It Works
               </Link>
-              <Link
-                to="/faq"
-                className="text-gray-500 hover:text-gray-900 px-3 py-2 text-sm font-medium"
-              >
-                FAQ
-              </Link>
               {user && (
-                <Link
-                  to="/dashboard"
-                  className="text-gray-500 hover:text-gray-900 px-3 py-2 text-sm font-medium"
-                >
-                  Dashboard
-                </Link>
+                <>
+                  <Link
+                    to="/dashboard"
+                    className="text-gray-500 hover:text-gray-900 px-3 py-2 text-sm font-medium"
+                  >
+                    Dashboard
+                  </Link>
+                  <Link
+                    to="/goals"
+                    className="text-gray-500 hover:text-gray-900 px-3 py-2 text-sm font-medium"
+                  >
+                    Goals & Projection
+                  </Link>
+                  <Link
+                    to="/simulations"
+                    className="text-gray-500 hover:text-gray-900 px-3 py-2 text-sm font-medium"
+                  >
+                    Monte Carlo
+                  </Link>
+                </>
               )}
             </nav>
           </div>

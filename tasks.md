@@ -1,5 +1,37 @@
 # Project Rocket Fi - Consolidated Development Tasks
 
+## 🚨 CRITICAL BUILD ERRORS
+- [ ] Fix the following build errors:
+    ```text
+
+up to date, audited 313 packages in 602ms
+
+54 packages are looking for funding
+  run `npm fund` for details
+
+2 moderate severity vulnerabilities
+
+To address all issues (including breaking changes), run:
+  npm audit fix --force
+
+Run `npm audit` for details.
+
+> rocket-fi@0.1.0 build
+> tsc && vite build
+
+src/pages/RetirementGoalsPage.tsx(9,3): error TS6133: 'LineChart' is declared but its value is never read.
+src/pages/RetirementGoalsPage.tsx(10,3): error TS6133: 'Line' is declared but its value is never read.
+src/pages/SimulationDashboard.tsx(5,3): error TS6133: 'runProjection' is declared but its value is never read.
+src/pages/SimulationDashboard.tsx(15,3): error TS6133: 'Legend' is declared but its value is never read.
+src/utils/calculations.ts(3,3): error TS6133: 'Asset' is declared but its value is never read.
+src/utils/calculations.ts(4,3): error TS6133: 'Liability' is declared but its value is never read.
+src/utils/calculations.ts(5,3): error TS6133: 'InvestmentAccount' is declared but its value is never read.
+src/utils/calculations.ts(6,3): error TS6133: 'IncomeSource' is declared but its value is never read.
+src/utils/calculations.ts(7,3): error TS6133: 'Expense' is declared but its value is never read.
+src/utils/calculations.ts(76,7): error TS6133: 'liabilities' is declared but its value is never read.
+    ```
+
+
 ## Phase 1: Project Setup & Core Architecture
 
 - [x] **Initialize Project**: Setup React with Vite and Tailwind CSS.
