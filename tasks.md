@@ -1,5 +1,28 @@
 # Project Rocket Fi - Consolidated Development Tasks
 
+## 🚨 CRITICAL BUILD ERRORS
+- [ ] Fix the following build errors:
+    ```text
+
+up to date, audited 491 packages in 572ms
+
+118 packages are looking for funding
+  run `npm fund` for details
+
+2 moderate severity vulnerabilities
+
+To address all issues (including breaking changes), run:
+  npm audit fix --force
+
+Run `npm audit` for details.
+
+> rocket-fi@0.1.0 build
+> tsc && vite build
+
+src/pages/SimulationDashboard.tsx(352,18): error TS2304: Cannot find name 'Activity'.
+    ```
+
+
 ## Phase 1: Project Setup & Core Architecture
 
 - [x] **Initialize Project**: Setup React with Vite and Tailwind CSS.

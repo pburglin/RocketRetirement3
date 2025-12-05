@@ -13,22 +13,28 @@ import {
 import {
   RefreshCw,
   Play,
-  Activity,
-  Info,
   TrendingUp,
   AlertTriangle,
   CheckCircle,
+  Info,
+  Settings2,
 } from "lucide-react";
 
 export const SimulationDashboard: React.FC = () => {
   const { user } = useAuth();
 
   // Simulation Parameters
-  const [iterations, setIterations] = useState(50); // Default low for browser performance, can go up to 1000
+  const [iterations, setIterations] = useState(50);
   const [volatility, setVolatility] = useState(15); // Standard deviation %
   const [meanReturn, setMeanReturn] = useState(7); // %
+  const [lifeExpectancy, setLifeExpectancy] = useState(90);
+  const [inflationRate, setInflationRate] = useState(3);
+  const [annualRetirementSpending, setAnnualRetirementSpending] =
+    useState(60000);
+
   const [simulations, setSimulations] = useState<SimulationResult[][]>([]);
   const [isRunning, setIsRunning] = useState(false);
+  const [showAdvanced, setShowAdvanced] = useState(false);
 
   // Risk Metrics State
   const [riskMetrics, setRiskMetrics] = useState<{
@@ -40,8 +46,7 @@ export const SimulationDashboard: React.FC = () => {
 
   // Base assumptions (grab from user or defaults)
   const currentAge = user ? calculateAge(user.dob || "") : 30;
-  const retirementAge = 65;
-  const lifeExpectancy = 90;
+  const retirementAge = 65; // Could be lifted to state or prop later if needed
 
   const handleRun = async () => {
     if (!user) return;
@@ -64,8 +69,8 @@ export const SimulationDashboard: React.FC = () => {
         const totalMonthlySurplus = income - expenses;
         let annualAddition = totalMonthlySurplus * 12;
 
-        const spending = 60000; // Hardcoded baseline for now
-        const infl = 3; // 3% inflation
+        const spending = annualRetirementSpending;
+        const infl = inflationRate;
 
         run.push({
           age,
@@ -129,7 +134,7 @@ export const SimulationDashboard: React.FC = () => {
 
       setRiskMetrics({
         sharpeRatio: theoreticalSharpe,
-        maxDrawdown: 0, // Placeholder
+        maxDrawdown: 0,
         standardDeviation: volatility,
         successRate,
       });
@@ -159,7 +164,8 @@ export const SimulationDashboard: React.FC = () => {
             Monte Carlo Simulation
           </h1>
           <p className="text-gray-500 mt-1">
-            Stress-test your retirement plan against market volatility.
+            Stress-test your retirement plan against market volatility and
+            economic variables.
           </p>
         </div>
       </div>
@@ -168,56 +174,125 @@ export const SimulationDashboard: React.FC = () => {
         {/* Main Chart Area */}
         <div className="lg:col-span-3 bg-white p-6 rounded-lg shadow-sm border border-gray-200">
           {/* Controls */}
-          <div className="flex flex-wrap gap-6 items-end mb-6 p-4 bg-gray-50 rounded-lg border border-gray-100">
-            <div>
-              <label className="block text-xs font-medium text-gray-500 mb-1 uppercase tracking-wider">
-                Scenarios
-              </label>
-              <select
-                value={iterations}
-                onChange={(e) => setIterations(Number(e.target.value))}
-                className="block w-32 rounded-md border-gray-300 border p-2 text-sm bg-white"
+          <div className="mb-6 p-4 bg-gray-50 rounded-lg border border-gray-100">
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-sm font-semibold text-gray-700 flex items-center gap-2">
+                <Settings2 className="w-4 h-4" /> Simulation Parameters
+              </h3>
+              <button
+                onClick={() => setShowAdvanced(!showAdvanced)}
+                className="text-xs text-blue-600 hover:text-blue-800 underline"
               >
-                <option value="10">10 (Fast)</option>
-                <option value="50">50 (Standard)</option>
-                <option value="100">100 (Detailed)</option>
-                <option value="500">500 (Precise)</option>
-              </select>
+                {showAdvanced ? "Hide Advanced" : "Show Advanced"}
+              </button>
             </div>
-            <div>
-              <label className="block text-xs font-medium text-gray-500 mb-1 uppercase tracking-wider">
-                Exp. Return (%)
-              </label>
-              <input
-                type="number"
-                value={meanReturn}
-                onChange={(e) => setMeanReturn(Number(e.target.value))}
-                className="block w-24 rounded-md border-gray-300 border p-2 text-sm"
-              />
-            </div>
-            <div>
-              <label className="block text-xs font-medium text-gray-500 mb-1 uppercase tracking-wider">
-                Volatility (%)
-              </label>
-              <input
-                type="number"
-                value={volatility}
-                onChange={(e) => setVolatility(Number(e.target.value))}
-                className="block w-24 rounded-md border-gray-300 border p-2 text-sm"
-              />
-            </div>
-            <button
-              onClick={handleRun}
-              disabled={isRunning}
-              className="flex items-center gap-2 px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50 transition-colors shadow-sm"
-            >
-              {isRunning ? (
-                <RefreshCw className="animate-spin h-4 w-4" />
-              ) : (
-                <Play className="h-4 w-4" />
+
+            <div className="flex flex-wrap gap-6 items-end">
+              {/* Primary Controls */}
+              <div>
+                <label className="block text-xs font-medium text-gray-500 mb-1 uppercase tracking-wider">
+                  Scenarios
+                </label>
+                <select
+                  value={iterations}
+                  onChange={(e) => setIterations(Number(e.target.value))}
+                  className="block w-32 rounded-md border-gray-300 border p-2 text-sm bg-white"
+                >
+                  <option value="10">10 (Fast)</option>
+                  <option value="50">50 (Standard)</option>
+                  <option value="100">100 (Detailed)</option>
+                  <option value="500">500 (Precise)</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-xs font-medium text-gray-500 mb-1 uppercase tracking-wider">
+                  Retirement Spending
+                </label>
+                <div className="relative rounded-md shadow-sm">
+                  <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-2">
+                    <span className="text-gray-500 sm:text-sm">$</span>
+                  </div>
+                  <input
+                    type="number"
+                    value={annualRetirementSpending}
+                    onChange={(e) =>
+                      setAnnualRetirementSpending(Number(e.target.value))
+                    }
+                    className="block w-36 rounded-md border-gray-300 border p-2 pl-6 text-sm"
+                  />
+                </div>
+                <p className="text-[10px] text-gray-400 mt-1">
+                  Today's Dollars
+                </p>
+              </div>
+
+              {/* Advanced Controls */}
+              {showAdvanced && (
+                <>
+                  <div>
+                    <label className="block text-xs font-medium text-gray-500 mb-1 uppercase tracking-wider">
+                      Life Expectancy
+                    </label>
+                    <input
+                      type="number"
+                      value={lifeExpectancy}
+                      onChange={(e) =>
+                        setLifeExpectancy(Number(e.target.value))
+                      }
+                      className="block w-24 rounded-md border-gray-300 border p-2 text-sm"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-medium text-gray-500 mb-1 uppercase tracking-wider">
+                      Inflation (%)
+                    </label>
+                    <input
+                      type="number"
+                      step="0.1"
+                      value={inflationRate}
+                      onChange={(e) => setInflationRate(Number(e.target.value))}
+                      className="block w-24 rounded-md border-gray-300 border p-2 text-sm"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-medium text-gray-500 mb-1 uppercase tracking-wider">
+                      Exp. Return (%)
+                    </label>
+                    <input
+                      type="number"
+                      value={meanReturn}
+                      onChange={(e) => setMeanReturn(Number(e.target.value))}
+                      className="block w-24 rounded-md border-gray-300 border p-2 text-sm"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-medium text-gray-500 mb-1 uppercase tracking-wider">
+                      Volatility (%)
+                    </label>
+                    <input
+                      type="number"
+                      value={volatility}
+                      onChange={(e) => setVolatility(Number(e.target.value))}
+                      className="block w-24 rounded-md border-gray-300 border p-2 text-sm"
+                    />
+                  </div>
+                </>
               )}
-              Run Simulation
-            </button>
+
+              <button
+                onClick={handleRun}
+                disabled={isRunning}
+                className="ml-auto flex items-center gap-2 px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50 transition-colors shadow-sm"
+              >
+                {isRunning ? (
+                  <RefreshCw className="animate-spin h-4 w-4" />
+                ) : (
+                  <Play className="h-4 w-4" />
+                )}
+                Run Simulation
+              </button>
+            </div>
           </div>
 
           <div className="h-[500px] w-full relative">
