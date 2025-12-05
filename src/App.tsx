@@ -1,4 +1,3 @@
-import React from "react";
 import { AuthProvider } from "./context/AuthContext";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 
@@ -20,8 +19,8 @@ function App() {
       <BrowserRouter>
         <Routes>
           {/* We will implement proper Protected Routes later.
-               For now, just mapping the basic structure.
-            */}
+For now, just mapping the basic structure.
+*/}
           <Route path="/" element={<LandingPage />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="*" element={<Navigate to="/" replace />} />
