@@ -1,5 +1,39 @@
 # Project Rocket Fi - Consolidated Development Tasks
 
+## 🚨 CRITICAL BUILD ERRORS
+- [ ] Fix the following build errors:
+    ```text
+
+up to date, audited 491 packages in 559ms
+
+118 packages are looking for funding
+  run `npm fund` for details
+
+2 moderate severity vulnerabilities
+
+To address all issues (including breaking changes), run:
+  npm audit fix --force
+
+Run `npm audit` for details.
+
+> rocket-fi@0.1.0 build
+> tsc && vite build
+
+src/pages/LiabilitiesPage.tsx(169,2): error TS17008: JSX element 'form' has no corresponding closing tag.
+src/pages/LiabilitiesPage.tsx(182,2): error TS17008: JSX element 'div' has no corresponding closing tag.
+src/pages/LiabilitiesPage.tsx(202,2): error TS17008: JSX element 'div' has no corresponding closing tag.
+src/pages/LiabilitiesPage.tsx(206,2): error TS17008: JSX element 'div' has no corresponding closing tag.
+src/pages/LiabilitiesPage.tsx(207,2): error TS17008: JSX element 'div' has no corresponding closing tag.
+src/pages/LiabilitiesPage.tsx(208,2): error TS17008: JSX element 'span' has no corresponding closing tag.
+src/pages/LiabilitiesPage.tsx(238,2): error TS17008: JSX element 'select' has no corresponding closing tag.
+src/pages/LiabilitiesPage.tsx(265,1): error TS1109: Expression expected.
+src/pages/LiabilitiesPage.tsx(265,4): error TS1005: ')' expected.
+src/pages/LiabilitiesPage.tsx(272,2): error TS1381: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+src/pages/LiabilitiesPage.tsx(282,1): error TS1381: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+src/pages/LiabilitiesPage.tsx(284,1): error TS1005: '</' expected.
+    ```
+
+
 ## Phase 1: Project Setup & Core Architecture
 
 - [x] **Initialize Project**: Setup React with Vite and Tailwind CSS.

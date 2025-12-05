@@ -1,4 +1,3 @@
-
 import React, { useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
 import { ModulePageLayout } from "../components/ModulePageLayout";
@@ -189,9 +188,7 @@ const InvestmentForm: React.FC<{
       setName(initialData.name || "");
       setBalance(initialData.balance?.toString() || "");
       setMonthlyContribution(initialData.monthlyContribution?.toString() || "");
-      setAccountType(
-        initialData.accountType || "Investment (tax advantaged)",
-      );
+      setAccountType(initialData.accountType || "Investment (tax advantaged)");
       setRiskProfile(initialData.riskProfile || "Medium");
       setEstimatedReturn(initialData.estimatedReturn?.toString() || "7");
       setAccountNumberLast4(initialData.accountNumberLast4 || "");

@@ -1,6 +1,10 @@
-import React, { useState } from "react";
+import React from "react";
 import { useAuth } from "../context/AuthContext";
 import { Link } from "react-router-dom";
+import {
+  calculateNetWorth,
+  calculateMonthlyCashFlow,
+} from "../utils/calculations";
 import {
   ChevronDown,
   ChevronUp,
@@ -9,12 +13,26 @@ import {
   Landmark,
   TrendingUp,
   Wallet,
+  Activity,
+  ArrowUpCircle,
+  ArrowDownCircle,
 } from "lucide-react";
 
 export const DashboardPage: React.FC = () => {
   const { user } = useAuth();
 
   if (!user) return null;
+
+  // Calculations
+  const netWorth = calculateNetWorth(user);
+  const { income, expenses, surplus } = calculateMonthlyCashFlow(user);
+
+  const totalAssetsValue =
+    (user.assets?.reduce((sum, a) => sum + a.value, 0) || 0) +
+    (user.investmentAccounts?.reduce((sum, i) => sum + i.balance, 0) || 0);
+
+  const totalLiabilitiesValue =
+    user.liabilities?.reduce((sum, l) => sum + l.balance, 0) || 0;
 
   return (
     <div className="max-w-7xl mx-auto p-6 space-y-8">
@@ -30,36 +48,119 @@ export const DashboardPage: React.FC = () => {
         </Link>
       </div>
 
-      {/* Summary Cards Row */}
-      <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
-        <QuickLink
-          to="/income"
-          label="Income"
-          icon={<DollarSign className="text-green-600" />}
-        />
-        <QuickLink
-          to="/expenses"
-          label="Expenses"
-          icon={<CreditCard className="text-red-600" />}
-        />
-        <QuickLink
-          to="/assets"
-          label="Assets"
-          icon={<Landmark className="text-blue-600" />}
-        />
-        <QuickLink
-          to="/liabilities"
-          label="Liabilities"
-          icon={<TrendingUp className="text-orange-600" />}
-        />
-        <QuickLink
-          to="/investments"
-          label="Investments"
-          icon={<Wallet className="text-purple-600" />}
-        />
+      {/* Financial Snapshot */}
+      <div>
+        <h2 className="text-lg font-semibold text-gray-700 mb-3">
+          Financial Snapshot
+        </h2>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <SummaryCard
+            title="Total Assets"
+            value={totalAssetsValue}
+            icon={<Landmark className="text-blue-600 w-6 h-6" />}
+            subtext="Investments + Fixed Assets"
+          />
+          <SummaryCard
+            title="Total Liabilities"
+            value={totalLiabilitiesValue}
+            icon={<TrendingUp className="text-orange-600 w-6 h-6" />}
+            isNegative
+          />
+          <SummaryCard
+            title="Net Worth"
+            value={netWorth}
+            icon={<Activity className="text-purple-600 w-6 h-6" />}
+            highlight
+          />
+        </div>
       </div>
 
+      {/* Monthly Cash Flow */}
+      <div>
+        <h2 className="text-lg font-semibold text-gray-700 mb-3">
+          Monthly Cash Flow
+        </h2>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <SummaryCard
+            title="Monthly Income"
+            value={income}
+            icon={<ArrowUpCircle className="text-green-600 w-6 h-6" />}
+            monthly
+          />
+          <SummaryCard
+            title="Monthly Expenses"
+            value={expenses}
+            icon={<ArrowDownCircle className="text-red-600 w-6 h-6" />}
+            subtext="Includes Liability Payments"
+            monthly
+            isNegative
+          />
+          <SummaryCard
+            title={surplus >= 0 ? "Monthly Surplus" : "Monthly Deficit"}
+            value={surplus}
+            icon={<Wallet className="text-indigo-600 w-6 h-6" />}
+            monthly
+            highlight={surplus > 0}
+            isNegative={surplus < 0}
+          />
+        </div>
+      </div>
+
+      {/* Quick Navigation Links - Reordered */}
+      <div>
+        <h2 className="text-lg font-semibold text-gray-700 mb-3">
+          Quick Actions
+        </h2>
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+          <QuickLink
+            to="/income"
+            label="Income"
+            icon={<DollarSign className="text-green-600" />}
+          />
+          <QuickLink
+            to="/investments"
+            label="Investments"
+            icon={<Wallet className="text-purple-600" />}
+          />
+          <QuickLink
+            to="/assets"
+            label="Assets"
+            icon={<Landmark className="text-blue-600" />}
+          />
+          <QuickLink
+            to="/expenses"
+            label="Expenses"
+            icon={<CreditCard className="text-red-600" />}
+          />
+          <QuickLink
+            to="/liabilities"
+            label="Liabilities"
+            icon={<TrendingUp className="text-orange-600" />}
+          />
+        </div>
+      </div>
+
+      {/* Categories List - Reordered */}
       <div className="space-y-4">
+        {/* 1. Income Sources */}
+        <CollapsibleSection
+          title="Income Sources"
+          count={user.incomeSources?.length || 0}
+          total={
+            user.incomeSources?.reduce((sum, item) => sum + item.amount, 0) || 0
+          }
+          path="/income"
+          isMonthly
+        >
+          <SimpleList
+            items={user.incomeSources}
+            valueKey="amount"
+            labelKey="name"
+            isMonthly
+          />
+        </CollapsibleSection>
+
+        {/* 2. Investments */}
         <CollapsibleSection
           title="Investments"
           count={user.investmentAccounts?.length || 0}
@@ -78,6 +179,7 @@ export const DashboardPage: React.FC = () => {
           />
         </CollapsibleSection>
 
+        {/* 3. Assets */}
         <CollapsibleSection
           title="Assets"
           count={user.assets?.length || 0}
@@ -87,40 +189,7 @@ export const DashboardPage: React.FC = () => {
           <SimpleList items={user.assets} valueKey="value" labelKey="name" />
         </CollapsibleSection>
 
-        <CollapsibleSection
-          title="Liabilities"
-          count={user.liabilities?.length || 0}
-          total={
-            user.liabilities?.reduce((sum, item) => sum + item.balance, 0) || 0
-          }
-          path="/liabilities"
-          isNegative
-        >
-          <SimpleList
-            items={user.liabilities}
-            valueKey="balance"
-            labelKey="name"
-            isNegative
-          />
-        </CollapsibleSection>
-
-        <CollapsibleSection
-          title="Income Sources"
-          count={user.incomeSources?.length || 0}
-          total={
-            user.incomeSources?.reduce((sum, item) => sum + item.amount, 0) || 0
-          }
-          path="/income"
-          isMonthly
-        >
-          <SimpleList
-            items={user.incomeSources}
-            valueKey="amount"
-            labelKey="name"
-            isMonthly
-          />
-        </CollapsibleSection>
-
+        {/* 4. Expenses */}
         <CollapsibleSection
           title="Expenses"
           count={user.expenses?.length || 0}
@@ -139,7 +208,69 @@ export const DashboardPage: React.FC = () => {
             isNegative
           />
         </CollapsibleSection>
+
+        {/* 5. Liabilities */}
+        <CollapsibleSection
+          title="Liabilities"
+          count={user.liabilities?.length || 0}
+          total={
+            user.liabilities?.reduce((sum, item) => sum + item.balance, 0) || 0
+          }
+          path="/liabilities"
+          isNegative
+        >
+          <SimpleList
+            items={user.liabilities}
+            valueKey="balance"
+            labelKey="name"
+            isNegative
+          />
+        </CollapsibleSection>
       </div>
+    </div>
+  );
+};
+
+const SummaryCard = ({
+  title,
+  value,
+  icon,
+  monthly = false,
+  isNegative = false,
+  highlight = false,
+  subtext,
+}: {
+  title: string;
+  value: number;
+  icon: React.ReactNode;
+  monthly?: boolean;
+  isNegative?: boolean;
+  highlight?: boolean;
+  subtext?: string;
+}) => {
+  return (
+    <div
+      className={`bg-white p-6 rounded-lg shadow-sm border ${highlight ? "border-blue-200 ring-1 ring-blue-100" : "border-gray-200"}`}
+    >
+      <div className="flex items-center justify-between mb-4">
+        <h3 className="text-sm font-medium text-gray-500 uppercase tracking-wider">
+          {title}
+        </h3>
+        <div className="p-2 bg-gray-50 rounded-full">{icon}</div>
+      </div>
+      <div className="flex items-baseline gap-1">
+        <span
+          className={`text-2xl font-bold ${isNegative ? "text-red-600" : "text-gray-900"}`}
+        >
+          {new Intl.NumberFormat("en-US", {
+            style: "currency",
+            currency: "USD",
+            maximumFractionDigits: 0,
+          }).format(value)}
+        </span>
+        {monthly && <span className="text-sm text-gray-500">/mo</span>}
+      </div>
+      {subtext && <p className="mt-1 text-xs text-gray-400">{subtext}</p>}
     </div>
   );
 };
@@ -181,18 +312,17 @@ const CollapsibleSection = ({
 }) => {
   const [isOpen, setIsOpen] = useState(false);
 
-  // Format number: $1,234 (no cents)
   const formattedTotal = new Intl.NumberFormat("en-US", {
     style: "currency",
     currency: "USD",
     maximumFractionDigits: 0,
   }).format(total);
 
-  const totalClass = isNegative ? "" : "";
+  const totalClass = isNegative ? "text-red-600" : "text-gray-900";
 
   return (
     <div
-      className={`bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden ${totalClass}`}
+      className={`bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden`}
     >
       <div
         className="w-full px-6 py-4 flex justify-between items-center bg-white cursor-pointer hover:bg-gray-50 transition-colors select-none"
@@ -200,9 +330,12 @@ const CollapsibleSection = ({
       >
         <div className="flex items-center gap-4">
           <h2 className="text-lg font-semibold text-gray-900">{title}</h2>
-          <span className="text-sm text-gray-500">
-            {count} item{count !== 1 ? "s" : ""}, total {formattedTotal}
+          <span className={`text-sm ${totalClass} font-medium`}>
+            {formattedTotal}
             {isMonthly ? "/mo" : ""}
+          </span>
+          <span className="text-xs text-gray-400">
+            ({count} item{count !== 1 ? "s" : ""})
           </span>
         </div>
         <div className="flex items-center gap-4">
@@ -276,9 +409,16 @@ const SimpleList = ({
               key={idx}
               className="flex justify-between items-center text-sm border-b border-gray-50 last:border-0 pb-2 last:pb-0"
             >
-              <span className="text-gray-700 truncate mr-4">
-                {item[labelKey]}
-              </span>
+              <div className="flex flex-col">
+                <span className="text-gray-700 truncate mr-4">
+                  {item[labelKey]}
+                </span>
+                {item.details && (
+                  <span className="text-xs text-gray-400 truncate max-w-[200px]">
+                    {item.details}
+                  </span>
+                )}
+              </div>
               <span
                 className={`font-medium whitespace-nowrap ${isNegative ? "text-red-600" : "text-gray-900"}`}
               >
