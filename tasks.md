@@ -134,6 +134,9 @@ _General UI Requirements for all lists below: Sort items by highest value first,
 - [x] in Simulations screen, allow user to change the life expectancy and take it into account in our simulations. it seems to be hardcoded to 90 years. also allow user to set inflation rate and "Annual Retirement Spending (Today's Dollars)".
 - [x] **State Management**: Implement global state persistence (or Context preservation) to ensure field values are not lost when navigating between screens without saving.
   - [x] **Goals & Simulations State Sync**: Fixed Annual Retirement Spending, Life Expectancy, and Inflation Rate values not persisting between Goals and Simulations screens by implementing shared PlanningContext.
+- [x] **Retirement Age Integration**: Fixed Simulations screen to use target retirement age set in Goals screen instead of hardcoded 65, ensuring consistent retirement planning across all modules.
+  - [x] **Enhanced Simulations Control**: Added target retirement age field to Advanced section in Simulations screen for direct user control over retirement timing.
+- [x] **AI Prompt Enhancement**: Added target retirement age, life expectancy, expected inflation rate, and annual retirement spending to AI prompts for personalized recommendations in Insights screen.
 - [x] **Visual Enhancements**:
   - [x] **Contextual Stats**: Add small, collapsible statistical charts to every CRUD screen (e.g., an asset allocation pie chart on the Assets screen).
   - [x] **Chart Consistency**: Change Income Sources screen from bar chart to pie chart to match Investments and Assets categories.

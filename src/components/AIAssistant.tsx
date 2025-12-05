@@ -3,6 +3,7 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { MessageCircle, Send, Loader2, User, Bot, ChevronDown, ChevronUp } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
+import { usePlanning } from "../context/PlanningContext";
 import { fetchLLMAnalysis } from "../lib/llm";
 
 interface Message {
@@ -19,6 +20,7 @@ interface AIAssistantProps {
 
 export const AIAssistant: React.FC<AIAssistantProps> = ({ mode, onClose }) => {
   const { user } = useAuth();
+  const { assumptions } = usePlanning();
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputMessage, setInputMessage] = useState("");
   const [loading, setLoading] = useState(false);
@@ -43,7 +45,8 @@ export const AIAssistant: React.FC<AIAssistantProps> = ({ mode, onClose }) => {
         user,
         "google/gemma-3-27b-it:free", // Default model
         mode === 'beneficiary' ? 'beneficiary' : 'chat',
-        inputMessage.trim() // Pass the user's message as customMessage
+        inputMessage.trim(), // Pass the user's message as customMessage
+        assumptions
       );
 
       const assistantMessage: Message = {

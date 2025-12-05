@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { useAuth } from "../context/AuthContext";
+import { usePlanning } from "../context/PlanningContext";
 import {
   fetchLLMAnalysis,
   LLMResponse,
@@ -26,6 +27,7 @@ import {
 
 export const ReportsInsightsPage: React.FC = () => {
   const { user } = useAuth();
+  const { assumptions } = usePlanning();
   const [selectedModel, setSelectedModel] = useState(FREE_MODELS[0]);
   const [availableModels, setAvailableModels] = useState<string[]>(FREE_MODELS);
   const [loading, setLoading] = useState(false);
@@ -89,7 +91,7 @@ export const ReportsInsightsPage: React.FC = () => {
     setError("");
 
     try {
-      const response = await fetchLLMAnalysis(user, selectedModel);
+      const response = await fetchLLMAnalysis(user, selectedModel, 'report', undefined, assumptions);
       
       // Update current report
       setReport(response);
@@ -115,7 +117,7 @@ export const ReportsInsightsPage: React.FC = () => {
 
   const getPromptPreview = () => {
     if (!user) return "";
-    const { systemPrompt, userMessage } = constructPrompt(user);
+    const { systemPrompt, userMessage } = constructPrompt(user, 'report', assumptions);
     return `### SYSTEM:\n${systemPrompt}\n\n### USER:\n${userMessage}`;
   };
 

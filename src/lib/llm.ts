@@ -1,5 +1,6 @@
 import { UserProfile } from "../services/storage";
 import { calculateAge, calculateNetWorth } from "../utils/calculations";
+import { PlanningAssumptions } from "../context/PlanningContext";
 
 const OPENROUTER_API_KEY = (import.meta as any).env.VITE_OPENROUTER_API_KEY;
 const SITE_URL = window.location.origin;
@@ -139,7 +140,11 @@ const summarizeList = (
   return result;
 };
 
-export const constructPrompt = (user: UserProfile, promptType: 'report' | 'beneficiary' | 'chat' = 'report') => {
+export const constructPrompt = (
+  user: UserProfile, 
+  promptType: 'report' | 'beneficiary' | 'chat' = 'report',
+  planningAssumptions?: PlanningAssumptions
+) => {
   const age = calculateAge(user.dob || "");
   const netWorth = calculateNetWorth(user);
 
@@ -156,6 +161,12 @@ export const constructPrompt = (user: UserProfile, promptType: 'report' | 'benef
       state: user.state,
       dependents: user.dependents?.map((d) => ({ age: d.age })),
     },
+    planningAssumptions: planningAssumptions ? {
+      targetRetirementAge: planningAssumptions.retirementAge,
+      lifeExpectancy: planningAssumptions.lifeExpectancy,
+      expectedInflationRate: planningAssumptions.inflationRate,
+      annualRetirementSpending: planningAssumptions.annualRetirementSpending,
+    } : undefined,
     summary: {
       netWorth,
       totalAssets: user.assets?.reduce((s, a) => s + a.value, 0) || 0,
@@ -288,6 +299,7 @@ export const fetchLLMAnalysis = async (
   model: string,
   promptType: 'report' | 'beneficiary' | 'chat' = 'report',
   customMessage?: string,
+  planningAssumptions?: PlanningAssumptions,
 ): Promise<LLMResponse> => {
   if (!OPENROUTER_API_KEY) {
     throw new Error("API Key is missing. Please check your .env file.");
@@ -303,7 +315,7 @@ export const fetchLLMAnalysis = async (
     promptType: promptType,
   });
 
-  const { systemPrompt, userMessage } = constructPrompt(user, promptType);
+  const { systemPrompt, userMessage } = constructPrompt(user, promptType, planningAssumptions);
   
   // For chat mode, append the user's question to the financial context
   let finalUserMessage = userMessage;

@@ -27,7 +27,7 @@ export const SimulationDashboard: React.FC = () => {
   const { assumptions, updateAssumption } = usePlanning();
 
   // Destructure assumptions for easier access
-  const { lifeExpectancy, inflationRate, annualRetirementSpending } = assumptions;
+  const { retirementAge, lifeExpectancy, inflationRate, annualRetirementSpending } = assumptions;
 
   // Simulation Parameters (these remain local to simulation)
   const [iterations, setIterations] = useState(50);
@@ -48,7 +48,6 @@ export const SimulationDashboard: React.FC = () => {
 
   // Base assumptions (grab from user or defaults)
   const currentAge = user ? calculateAge(user.dob || "") : 30;
-  const retirementAge = 65; // Could be lifted to state or prop later if needed
 
   const handleRun = async () => {
     if (!user) return;
@@ -232,6 +231,21 @@ export const SimulationDashboard: React.FC = () => {
               {/* Advanced Controls */}
               {showAdvanced && (
                 <>
+                  <div>
+                    <label className="block text-xs font-medium text-gray-500 mb-1 uppercase tracking-wider">
+                      Target Retirement Age
+                    </label>
+                    <input
+                      type="number"
+                      min={currentAge + 1}
+                      max={80}
+                      value={retirementAge}
+                      onChange={(e) =>
+                        updateAssumption('retirementAge', Number(e.target.value))
+                      }
+                      className="block w-24 rounded-md border-gray-300 border p-2 text-sm"
+                    />
+                  </div>
                   <div>
                     <label className="block text-xs font-medium text-gray-500 mb-1 uppercase tracking-wider">
                       Life Expectancy
