@@ -115,6 +115,7 @@ build – CI/CD or build scripts
 ### Image Generation
 
 - Describe any required image in src/data/image-manifest.json file in this format:
+
 ```
 {
   "id": "image_manifest",
@@ -136,6 +137,7 @@ build – CI/CD or build scripts
   }
 }
 ```
+
 - The developer will generate all images in image-manifest.json file as PNG images
 - Images are saved to `/public/assets/images` and referenced as `/assets/images/<filename>.png`
 
