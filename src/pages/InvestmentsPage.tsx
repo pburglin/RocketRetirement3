@@ -1,8 +1,61 @@
 
-import React from "react";
+import React, { useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
 import { ModulePageLayout } from "../components/ModulePageLayout";
 import { InvestmentAccount } from "../services/storage";
+
+const INVESTMENT_SUGGESTIONS: Partial<InvestmentAccount>[] = [
+{
+name: "Employer 401(k)",
+balance: 150000,
+accountType: "Investment (tax advantaged)",
+riskProfile: "High",
+estimatedReturn: 8,
+accountNumberLast4: "1234",
+},
+{
+name: "Roth IRA",
+balance: 50000,
+accountType: "Investment (tax advantaged)",
+riskProfile: "High",
+estimatedReturn: 8,
+},
+{
+name: "Brokerage Account",
+balance: 50000,
+accountType: "Investment (non-tax advantaged)",
+riskProfile: "Medium",
+estimatedReturn: 7,
+},
+{
+name: "High Yield Savings",
+balance: 20000,
+accountType: "Savings",
+riskProfile: "Low",
+estimatedReturn: 4,
+},
+{
+name: "Checking Account",
+balance: 5000,
+accountType: "Checking",
+riskProfile: "Low",
+estimatedReturn: 0,
+},
+{
+name: "HSA",
+balance: 8000,
+accountType: "Investment (tax advantaged)",
+riskProfile: "Medium",
+estimatedReturn: 6,
+},
+{
+name: "529 College Plan",
+balance: 25000,
+accountType: "Investment (tax advantaged)",
+riskProfile: "Medium",
+estimatedReturn: 7,
+},
+];
 
 export const InvestmentsPage: React.FC = () => {
 const { user, saveData } = useAuth();
@@ -31,6 +84,7 @@ return (
 title="Investment Accounts"
 singularTitle="Investment Account"
 items={items}
+suggestions={INVESTMENT_SUGGESTIONS}
 onAdd={handleAdd}
 onEdit={handleEdit}
 onDelete={handleDelete}
@@ -42,9 +96,11 @@ renderItem={(item) => (
 <div>
 <div className="flex items-center gap-2">
 <h3 className="font-semibold text-gray-900">{item.name}</h3>
+{item.accountNumberLast4 && (
 <span className="text-xs text-gray-400 bg-gray-50 px-2 rounded border">
 ...{item.accountNumberLast4}
 </span>
+)}
 </div>
 <div className="text-sm text-gray-500 flex flex-wrap gap-3 mt-1">
 <span className="font-medium text-blue-600">
@@ -65,7 +121,7 @@ Est. Return: {item.estimatedReturn}%
 renderForm={(onSubmit, initialData, onCancel) => (
 <InvestmentForm
 onSubmit={onSubmit}
-initialData={initialData}
+initialData={initialData as InvestmentAccount}
 onCancel={onCancel}
 />
 )}
@@ -75,7 +131,7 @@ onCancel={onCancel}
 
 const InvestmentForm: React.FC<{
 onSubmit: (data: any) => void;
-initialData?: InvestmentAccount;
+initialData?: Partial<InvestmentAccount>;
 onCancel?: () => void;
 }> = ({ onSubmit, initialData, onCancel }) => {
 const [name, setName] = React.useState(initialData?.name || "");
@@ -95,6 +151,20 @@ InvestmentAccount["accountType"]
 > const [accountNumberLast4, setAccountNumberLast4] = React.useState(
 > initialData?.accountNumberLast4 || "",
 > );
+
+// Update form when initialData changes (e.g., from quick add suggestion)
+useEffect(() => {
+if (initialData) {
+setName(initialData.name || "");
+setBalance(initialData.balance?.toString() || "");
+setAccountType(
+initialData.accountType || "Investment (tax advantaged)",
+);
+setRiskProfile(initialData.riskProfile || "Medium");
+setEstimatedReturn(initialData.estimatedReturn?.toString() || "7");
+setAccountNumberLast4(initialData.accountNumberLast4 || "");
+}
+}, [initialData]);
 
 const handleSubmit = (e: React.FormEvent) => {
 e.preventDefault();

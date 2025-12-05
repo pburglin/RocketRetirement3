@@ -1,8 +1,41 @@
 
-import React from "react";
+import React, { useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
 import { ModulePageLayout } from "../components/ModulePageLayout";
 import { Liability } from "../services/storage";
+
+const LIABILITY_SUGGESTIONS: Partial<Liability>[] = [
+{
+name: "Primary Mortgage",
+balance: 350000,
+monthlyPayment: 2400,
+interestRate: 6.5,
+},
+{
+name: "Auto Loan",
+balance: 20000,
+monthlyPayment: 450,
+interestRate: 7,
+},
+{
+name: "Credit Card Debt",
+balance: 5000,
+monthlyPayment: 150,
+interestRate: 20,
+},
+{
+name: "Student Loan",
+balance: 25000,
+monthlyPayment: 300,
+interestRate: 5,
+},
+{
+name: "HELOC",
+balance: 15000,
+monthlyPayment: 200,
+interestRate: 8,
+},
+];
 
 export const LiabilitiesPage: React.FC = () => {
 const { user, saveData } = useAuth();
@@ -31,6 +64,7 @@ return (
 title="Liabilities"
 singularTitle="Liability"
 items={items}
+suggestions={LIABILITY_SUGGESTIONS}
 onAdd={handleAdd}
 onEdit={handleEdit}
 onDelete={handleDelete}
@@ -55,7 +89,7 @@ Balance: ${item.balance.toLocaleString()}
 renderForm={(onSubmit, initialData, onCancel) => (
 <LiabilityForm
 onSubmit={onSubmit}
-initialData={initialData}
+initialData={initialData as Liability}
 onCancel={onCancel}
 />
 )}
@@ -65,7 +99,7 @@ onCancel={onCancel}
 
 const LiabilityForm: React.FC<{
 onSubmit: (data: any) => void;
-initialData?: Liability;
+initialData?: Partial<Liability>;
 onCancel?: () => void;
 }> = ({ onSubmit, initialData, onCancel }) => {
 const [name, setName] = React.useState(initialData?.name || "");
@@ -78,6 +112,15 @@ initialData?.monthlyPayment?.toString() || "",
 const [interestRate, setInterestRate] = React.useState(
 initialData?.interestRate?.toString() || "",
 );
+
+useEffect(() => {
+if (initialData) {
+setName(initialData.name || "");
+setBalance(initialData.balance?.toString() || "");
+setMonthlyPayment(initialData.monthlyPayment?.toString() || "");
+setInterestRate(initialData.interestRate?.toString() || "");
+}
+}, [initialData]);
 
 const handleSubmit = (e: React.FormEvent) => {
 e.preventDefault();

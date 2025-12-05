@@ -1,7 +1,35 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
 import { ModulePageLayout } from "../components/ModulePageLayout";
 import { IncomeSource } from "../services/storage";
+
+const INCOME_SUGGESTIONS: Partial<IncomeSource>[] = [
+  {
+    name: "Primary Salary",
+    amount: 6500,
+    category: "Pre-Retirement",
+  },
+  {
+    name: "Spouse Salary",
+    amount: 4500,
+    category: "Pre-Retirement",
+  },
+  {
+    name: "Annual Bonus (Avg)",
+    amount: 500,
+    category: "Pre-Retirement",
+  },
+  {
+    name: "Rental Income",
+    amount: 500,
+    category: "Pre and Post-Retirement",
+  },
+  {
+    name: "Stock Dividends",
+    amount: 150,
+    category: "Pre and Post-Retirement",
+  },
+];
 
 export const IncomePage: React.FC = () => {
   const { user, saveData } = useAuth();
@@ -29,6 +57,7 @@ export const IncomePage: React.FC = () => {
     <ModulePageLayout<IncomeSource>
       title="Income Sources"
       items={items}
+      suggestions={INCOME_SUGGESTIONS}
       onAdd={handleAdd}
       onEdit={handleEdit}
       onDelete={handleDelete}
@@ -52,7 +81,7 @@ export const IncomePage: React.FC = () => {
       renderForm={(onSubmit, initialData, onCancel) => (
         <IncomeForm
           onSubmit={onSubmit}
-          initialData={initialData}
+          initialData={initialData as IncomeSource}
           onCancel={onCancel}
         />
       )}
@@ -62,7 +91,7 @@ export const IncomePage: React.FC = () => {
 
 const IncomeForm: React.FC<{
   onSubmit: (data: any) => void;
-  initialData?: IncomeSource;
+  initialData?: Partial<IncomeSource>;
   onCancel?: () => void;
 }> = ({ onSubmit, initialData, onCancel }) => {
   const [name, setName] = React.useState(initialData?.name || "");
@@ -72,6 +101,14 @@ const IncomeForm: React.FC<{
   const [category, setCategory] = React.useState<IncomeSource["category"]>(
     initialData?.category || "Pre-Retirement",
   );
+
+  useEffect(() => {
+    if (initialData) {
+      setName(initialData.name || "");
+      setAmount(initialData.amount?.toString() || "");
+      setCategory(initialData.category || "Pre-Retirement");
+    }
+  }, [initialData]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();

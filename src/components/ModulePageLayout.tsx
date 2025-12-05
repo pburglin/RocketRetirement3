@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import {
   ChevronLeft,
@@ -8,18 +8,20 @@ import {
   Search,
   Edit2,
   Trash2,
+  Sparkles,
 } from "lucide-react";
 
-interface ModulePageLayoutProps<T> {
+interface ModulePageLayoutProps<T extends { name: string }> {
   title: string;
   singularTitle?: string;
   items: T[];
+  suggestions?: Partial<T>[];
   onAdd: (item: Omit<T, "id">) => void;
   onEdit: (item: T) => void;
   onDelete: (id: string) => void;
   renderForm: (
     onSubmit: (data: any) => void,
-    initialData?: T,
+    initialData?: Partial<T>, // Allow Partial for prefill
     onCancel?: () => void,
   ) => React.ReactNode;
   renderItem: (item: T) => React.ReactNode;
@@ -27,10 +29,11 @@ interface ModulePageLayoutProps<T> {
   filterFunction: (item: T, searchTerm: string) => boolean;
 }
 
-export function ModulePageLayout<T extends { id: string }>({
+export function ModulePageLayout<T extends { id: string; name: string }>({
   title,
   singularTitle,
   items,
+  suggestions = [],
   onAdd,
   onEdit,
   onDelete,
@@ -42,6 +45,7 @@ export function ModulePageLayout<T extends { id: string }>({
   const [isAdding, setIsAdding] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [editingItem, setEditingItem] = useState<T | null>(null);
+  const [prefillItem, setPrefillItem] = useState<Partial<T> | null>(null);
 
   const sortedItems = [...items].sort(sortFunction);
   const filteredItems = sortedItems.filter((item) =>
@@ -56,18 +60,45 @@ export function ModulePageLayout<T extends { id: string }>({
       onAdd(data);
     }
     setIsAdding(false);
+    setPrefillItem(null);
     // Scroll to top
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   const startEdit = (item: T) => {
     setEditingItem(item);
+    setPrefillItem(null);
     setIsAdding(true);
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
+  const startAdd = () => {
+    if (isAdding && !editingItem && !prefillItem) {
+      setIsAdding(false);
+    } else {
+      setEditingItem(null);
+      setPrefillItem(null);
+      setIsAdding(true);
+    }
+  };
+
+  const applySuggestion = (suggestion: Partial<T>) => {
+    setPrefillItem(suggestion);
+    setEditingItem(null);
+    setIsAdding(true);
+  };
+
   // Determine the label for the Add button
   const addItemLabel = singularTitle || title.slice(0, -1);
+
+  // Filter suggestions: exclude if an item with a similar name exists
+  const availableSuggestions = suggestions.filter((suggestion) => {
+    if (!suggestion.name) return false;
+    // Simple fuzzy check: string inclusion
+    return !items.some((item) =>
+      item.name.toLowerCase().includes(suggestion.name!.toLowerCase()),
+    );
+  });
 
   return (
     <div className="max-w-4xl mx-auto p-6 space-y-6">
@@ -90,13 +121,7 @@ export function ModulePageLayout<T extends { id: string }>({
       {/* Collapsible Add/Edit Section */}
       <div className="bg-white rounded-lg shadow overflow-hidden border border-gray-200">
         <button
-          onClick={() => {
-            if (isAdding && !editingItem) setIsAdding(false);
-            else {
-              setEditingItem(null);
-              setIsAdding(true);
-            }
-          }}
+          onClick={startAdd}
           className="w-full px-6 py-4 flex justify-between items-center bg-gray-50 hover:bg-gray-100 transition-colors"
         >
           <span className="font-medium text-gray-900 flex items-center">
@@ -116,10 +141,39 @@ export function ModulePageLayout<T extends { id: string }>({
 
         {isAdding && (
           <div className="p-6 border-t border-gray-200 animate-fadeIn">
-            {renderForm(handleFormSubmit, editingItem || undefined, () => {
-              setIsAdding(false);
-              setEditingItem(null);
-            })}
+            {/* Suggestions Chips */}
+            {!editingItem && availableSuggestions.length > 0 && (
+              <div className="mb-6">
+                <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3 flex items-center gap-1">
+                  <Sparkles className="w-3 h-3 text-yellow-500" />
+                  Quick Add Suggestions
+                </p>
+                <div className="flex flex-wrap gap-2">
+                  {availableSuggestions.slice(0, 5).map((s, idx) => (
+                    <button
+                      key={idx}
+                      type="button"
+                      onClick={() => applySuggestion(s)}
+                      className="px-3 py-1.5 rounded-full bg-blue-50 text-blue-700 text-sm font-medium hover:bg-blue-100 transition-colors border border-blue-100 flex items-center gap-1"
+                    >
+                      <Plus className="w-3 h-3" />
+                      {s.name}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Form */}
+            {renderForm(
+              handleFormSubmit,
+              editingItem || prefillItem || undefined,
+              () => {
+                setIsAdding(false);
+                setEditingItem(null);
+                setPrefillItem(null);
+              },
+            )}
           </div>
         )}
       </div>

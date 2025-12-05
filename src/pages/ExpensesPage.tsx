@@ -1,7 +1,45 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
 import { ModulePageLayout } from "../components/ModulePageLayout";
 import { Expense } from "../services/storage";
+
+const EXPENSE_SUGGESTIONS: Partial<Expense>[] = [
+  {
+    name: "Housing (Mortgage/Rent)",
+    amount: 2600,
+    retirementCategory: "Required",
+  },
+  {
+    name: "Groceries",
+    amount: 1500,
+    retirementCategory: "Required",
+  },
+  {
+    name: "Utilities",
+    amount: 700,
+    retirementCategory: "Required",
+  },
+  {
+    name: "Car Insurance",
+    amount: 150,
+    retirementCategory: "Required",
+  },
+  {
+    name: "Health Insurance",
+    amount: 400,
+    retirementCategory: "Required",
+  },
+  {
+    name: "Dining Out",
+    amount: 300,
+    retirementCategory: "Nice-to-have",
+  },
+  {
+    name: "Travel",
+    amount: 500,
+    retirementCategory: "Nice-to-have",
+  },
+];
 
 export const ExpensesPage: React.FC = () => {
   const { user, saveData } = useAuth();
@@ -25,6 +63,7 @@ export const ExpensesPage: React.FC = () => {
     <ModulePageLayout<Expense>
       title="Expenses"
       items={items}
+      suggestions={EXPENSE_SUGGESTIONS}
       onAdd={handleAdd}
       onEdit={handleEdit}
       onDelete={handleDelete}
@@ -50,7 +89,7 @@ export const ExpensesPage: React.FC = () => {
       renderForm={(onSubmit, initialData, onCancel) => (
         <ExpenseForm
           onSubmit={onSubmit}
-          initialData={initialData}
+          initialData={initialData as Expense}
           onCancel={onCancel}
         />
       )}
@@ -60,7 +99,7 @@ export const ExpensesPage: React.FC = () => {
 
 const ExpenseForm: React.FC<{
   onSubmit: (data: any) => void;
-  initialData?: Expense;
+  initialData?: Partial<Expense>;
   onCancel?: () => void;
 }> = ({ onSubmit, initialData, onCancel }) => {
   const [name, setName] = React.useState(initialData?.name || "");
@@ -70,6 +109,14 @@ const ExpenseForm: React.FC<{
   const [retirementCategory, setRetirementCategory] = React.useState<
     Expense["retirementCategory"]
   >(initialData?.retirementCategory || "Required");
+
+  useEffect(() => {
+    if (initialData) {
+      setName(initialData.name || "");
+      setAmount(initialData.amount?.toString() || "");
+      setRetirementCategory(initialData.retirementCategory || "Required");
+    }
+  }, [initialData]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();

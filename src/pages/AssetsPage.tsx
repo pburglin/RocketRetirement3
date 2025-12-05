@@ -1,7 +1,35 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
 import { ModulePageLayout } from "../components/ModulePageLayout";
 import { Asset } from "../services/storage";
+
+const ASSET_SUGGESTIONS: Partial<Asset>[] = [
+  {
+    name: "Primary Residence",
+    value: 450000,
+    depreciationRate: -3, // Appreciation
+  },
+  {
+    name: "Family Vehicle",
+    value: 35000,
+    depreciationRate: 15,
+  },
+  {
+    name: "Secondary Vehicle",
+    value: 20000,
+    depreciationRate: 15,
+  },
+  {
+    name: "Jewelry & Art",
+    value: 10000,
+    depreciationRate: 0,
+  },
+  {
+    name: "Rental Property",
+    value: 300000,
+    depreciationRate: -2,
+  },
+];
 
 export const AssetsPage: React.FC = () => {
   const { user, saveData } = useAuth();
@@ -25,6 +53,7 @@ export const AssetsPage: React.FC = () => {
     <ModulePageLayout<Asset>
       title="Assets"
       items={items}
+      suggestions={ASSET_SUGGESTIONS}
       onAdd={handleAdd}
       onEdit={handleEdit}
       onDelete={handleDelete}
@@ -40,7 +69,9 @@ export const AssetsPage: React.FC = () => {
               ${item.value.toLocaleString()}
             </span>
             <span className="text-xs text-gray-400">
-              Depreciation: {item.depreciationRate}% / yr
+              {item.depreciationRate < 0
+                ? `Appreciation: ${Math.abs(item.depreciationRate)}% / yr`
+                : `Depreciation: ${item.depreciationRate}% / yr`}
             </span>
           </div>
         </div>
@@ -48,7 +79,7 @@ export const AssetsPage: React.FC = () => {
       renderForm={(onSubmit, initialData, onCancel) => (
         <AssetForm
           onSubmit={onSubmit}
-          initialData={initialData}
+          initialData={initialData as Asset}
           onCancel={onCancel}
         />
       )}
@@ -58,7 +89,7 @@ export const AssetsPage: React.FC = () => {
 
 const AssetForm: React.FC<{
   onSubmit: (data: any) => void;
-  initialData?: Asset;
+  initialData?: Partial<Asset>;
   onCancel?: () => void;
 }> = ({ onSubmit, initialData, onCancel }) => {
   const [name, setName] = React.useState(initialData?.name || "");
@@ -68,6 +99,14 @@ const AssetForm: React.FC<{
   const [depreciationRate, setDepreciationRate] = React.useState(
     initialData?.depreciationRate?.toString() || "0",
   );
+
+  useEffect(() => {
+    if (initialData) {
+      setName(initialData.name || "");
+      setValue(initialData.value?.toString() || "");
+      setDepreciationRate(initialData.depreciationRate?.toString() || "0");
+    }
+  }, [initialData]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -115,13 +154,14 @@ const AssetForm: React.FC<{
         <input
           type="number"
           required
-          min="0"
-          max="100"
           step="0.1"
           value={depreciationRate}
           onChange={(e) => setDepreciationRate(e.target.value)}
           className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 border p-2"
         />
+        <p className="mt-1 text-xs text-gray-500">
+          Use negative numbers for appreciation (e.g. -3 for 3% growth).
+        </p>
       </div>
       <div className="flex justify-end gap-2 pt-2">
         {onCancel && (
