@@ -120,4 +120,5 @@ _General UI Requirements for all lists below: Sort items by highest value first,
 - [x] in Financial Dashboard screen, lets reorder categories as: Income Sources, Investments, Assets, Expenses and Liabilities.
 - [x] Liability form should have required fields for Name and Balance, and optional fields for everything else. this will allow user to enter future liabilities like "Child's Wedding" etc.
 - [x] in Financial Dashboard screen, add a Financial Snapshot section with cards for: Total Assets, Total Liabilities, Net Worth. add a Monthly Cash Flow section with cards for: Total Monthly Income, Total Monthly Expenses, Monthly Surplus/Deficit.
-- [ ] in Simulations screen, add verbiage and insights to help user understand the simulation results
+- [x] in Simulations screen, add verbiage and insights to help user understand the simulation results
+- [ ] in Simulations screen, allow user to change the life expectancy and take it into account in our simulations. it seems to be hardcoded to 90 years. also allow user to set inflation rate and "Annual Retirement Spending (Today's Dollars)".
