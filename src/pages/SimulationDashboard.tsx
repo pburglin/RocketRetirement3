@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import { useAuth } from "../context/AuthContext";
 import { calculateAge, SimulationResult } from "../utils/calculations";
 import {
@@ -107,6 +107,19 @@ export const SimulationDashboard: React.FC = () => {
     }, 100);
   };
 
+  const leftMargin = useMemo(() => {
+    if (simulations.length === 0) return 20; // Default
+    let globalMax = 0;
+    for (const run of simulations) {
+      for (const point of run) {
+        if (point.investments > globalMax) globalMax = point.investments;
+      }
+    }
+    const formattedValue = `$${Math.round(globalMax / 1000).toLocaleString()}k`;
+    const estimatedWidth = formattedValue.length * 8;
+    return Math.max(20, estimatedWidth - 35);
+  }, [simulations]);
+
   return (
     <div className="max-w-7xl mx-auto p-6 space-y-8">
       <h1 className="text-3xl font-bold text-gray-900">
@@ -169,7 +182,9 @@ export const SimulationDashboard: React.FC = () => {
         <div className="h-[500px] w-full">
           {simulations.length > 0 ? (
             <ResponsiveContainer width="100%" height="100%">
-              <LineChart margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+              <LineChart
+                margin={{ top: 5, right: 30, left: leftMargin, bottom: 5 }}
+              >
                 <CartesianGrid strokeDasharray="3 3" opacity={0.3} />
                 <XAxis
                   dataKey="age"

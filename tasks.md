@@ -1,5 +1,50 @@
 # Project Rocket Fi - Consolidated Development Tasks
 
+## 🚨 CRITICAL BUILD ERRORS
+- [ ] Fix the following build errors:
+    ```text
+
+up to date, audited 491 packages in 546ms
+
+118 packages are looking for funding
+  run `npm fund` for details
+
+2 moderate severity vulnerabilities
+
+To address all issues (including breaking changes), run:
+  npm audit fix --force
+
+Run `npm audit` for details.
+
+> rocket-fi@0.1.0 build
+> tsc && vite build
+
+src/pages/RetirementGoalsPage.tsx(192,47): error TS1005: ',' expected.
+src/pages/RetirementGoalsPage.tsx(192,49): error TS1005: ',' expected.
+src/pages/RetirementGoalsPage.tsx(192,56): error TS1005: ',' expected.
+src/pages/RetirementGoalsPage.tsx(193,13): error TS2657: JSX expressions must have one parent element.
+src/pages/RetirementGoalsPage.tsx(218,11): error TS1128: Declaration or statement expected.
+src/pages/RetirementGoalsPage.tsx(219,9): error TS1109: Expression expected.
+src/pages/RetirementGoalsPage.tsx(220,7): error TS1109: Expression expected.
+src/pages/RetirementGoalsPage.tsx(230,5): error TS1128: Declaration or statement expected.
+src/pages/RetirementGoalsPage.tsx(231,3): error TS1109: Expression expected.
+src/pages/RetirementGoalsPage.tsx(234,8): error TS1005: ';' expected.
+src/pages/RetirementGoalsPage.tsx(235,5): error TS2657: JSX expressions must have one parent element.
+src/pages/RetirementGoalsPage.tsx(254,3): error TS1128: Declaration or statement expected.
+src/pages/RetirementGoalsPage.tsx(255,1): error TS1109: Expression expected.
+src/pages/RetirementGoalsPage.tsx(257,1): error TS1109: Expression expected.
+src/pages/RetirementGoalsPage.tsx(258,1): error TS1128: Declaration or statement expected.
+src/pages/RetirementGoalsPage.tsx(275,50): error TS1109: Expression expected.
+src/pages/RetirementGoalsPage.tsx(275,55): error TS1005: ':' expected.
+src/pages/RetirementGoalsPage.tsx(275,102): error TS1381: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+src/pages/RetirementGoalsPage.tsx(275,104): error TS1381: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+src/pages/RetirementGoalsPage.tsx(276,1): error TS1382: Unexpected token. Did you mean `{'>'}` or `&gt;`?
+src/pages/RetirementGoalsPage.tsx(278,3): error TS17002: Expected corresponding JSX closing tag for 'div'.
+src/pages/RetirementGoalsPage.tsx(279,1): error TS1005: ')' expected.
+src/pages/RetirementGoalsPage.tsx(280,1): error TS1109: Expression expected.
+    ```
+
+
 ## Phase 1: Project Setup & Core Architecture
 
 - [x] **Initialize Project**: Setup React with Vite and Tailwind CSS.
@@ -107,10 +152,11 @@ _General UI Requirements for all lists below: Sort items by highest value first,
   - [x] **Loading State**: "Crunching the numbers..." with spinner.
 
 ## Phase 8: Fixing functional issues
-  - [ ] the labels in the Y axis in graphs in screens Goals and Simulations are getting cropped. Let's add a larger horizontal margin to avoid it. Make the margin dynamically larger based on the number of digits we present in the Y axis of the graph.
-  - [ ] the user's birth date is critical for all our reports. lets request user to setup the user profile before he can access the Goals, Simulations and Reports pages.
-  - [ ] in Liabilities screen, I see "Add New Liabilitie". This is incorrect, it should show "Add New Liability".
-  - [ ] add tips to help the user enter most accurate information. for example, in Investment screen "Risk Profile" field we can say "Use Low for Checking, Savings, CDs etc; Medium for S&P 500 ETF and mutual funds; High for riskier leveraged investment instruments like TQQQ"
-  - [ ] to help user enter comprehensive financial profile, lets include clickable examples for each category like Investments, Income, Expenses etc. for example, in Investments screen, when user clicks "Add New Investment Account", we can show top 5 most common options user still did not enter, including "Checking", "Savings", "Brokerage", "401K", "IRA" etc. same thing for the other categories. for example, in Expenses we can include "Car Insurance", "Health Insurance", "Groceries", "Utilities" etc.
-  - [ ] lets include a selection for each category so user can classify each item as "Pre-Retirement", "Post-Retirement" or "Pre and Pos-Retirement".
-  - [ ] lets include a free form field "Details" for each category so user can include special remarks for each item.
+
+- [ ] the labels in the Y axis in graphs in screens Goals and Simulations are getting cropped. Let's add a larger horizontal margin to avoid it. Make the margin dynamically larger based on the number of digits we present in the Y axis of the graph.
+- [ ] the user's birth date is critical for all our reports. lets request user to setup the user profile before he can access the Goals, Simulations and Reports pages.
+- [ ] in Liabilities screen, I see "Add New Liabilitie". This is incorrect, it should show "Add New Liability".
+- [ ] add tips to help the user enter most accurate information. for example, in Investment screen "Risk Profile" field we can say "Use Low for Checking, Savings, CDs etc; Medium for S&P 500 ETF and mutual funds; High for riskier leveraged investment instruments like TQQQ"
+- [ ] to help user enter comprehensive financial profile, lets include clickable examples for each category like Investments, Income, Expenses etc. for example, in Investments screen, when user clicks "Add New Investment Account", we can show top 5 most common options user still did not enter, including "Checking", "Savings", "Brokerage", "401K", "IRA" etc. same thing for the other categories. for example, in Expenses we can include "Car Insurance", "Health Insurance", "Groceries", "Utilities" etc.
+- [ ] lets include a selection for each category so user can classify each item as "Pre-Retirement", "Post-Retirement" or "Pre and Pos-Retirement".
+- [ ] lets include a free form field "Details" for each category so user can include special remarks for each item.
