@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 import { useAuth } from "../context/AuthContext";
 import {
   fetchLLMAnalysis,
@@ -258,7 +259,95 @@ export const ReportsInsightsPage: React.FC = () => {
               </div>
 
               <div className="p-8 prose prose-purple max-w-none text-gray-700">
-                <ReactMarkdown>{report.content}</ReactMarkdown>
+                <ReactMarkdown 
+                  remarkPlugins={[remarkGfm]}
+                  components={{
+                    table: ({ children }) => (
+                      <div className="overflow-x-auto my-6">
+                        <table className="w-full border-collapse bg-white border border-gray-200 rounded-lg shadow-sm">
+                          {children}
+                        </table>
+                      </div>
+                    ),
+                    thead: ({ children }) => (
+                      <thead className="bg-gradient-to-r from-purple-600 to-purple-700 text-white">
+                        {children}
+                      </thead>
+                    ),
+                    th: ({ children }) => (
+                      <th className="px-6 py-4 text-left text-sm font-semibold uppercase tracking-wide border-b-2 border-purple-800">
+                        {children}
+                      </th>
+                    ),
+                    td: ({ children }) => (
+                      <td className="px-6 py-4 text-sm text-gray-700 border-b border-gray-100">
+                        {children}
+                      </td>
+                    ),
+                    tbody: ({ children }) => (
+                      <tbody className="divide-y divide-gray-100">
+                        {children}
+                      </tbody>
+                    ),
+                    h1: ({ children }) => (
+                      <h1 className="text-3xl font-bold text-gray-900 mb-6 pb-3 border-b-3 border-purple-600">
+                        {children}
+                      </h1>
+                    ),
+                    h2: ({ children }) => (
+                      <h2 className="text-2xl font-semibold text-gray-900 mt-8 mb-4 pb-2 border-b-2 border-purple-400">
+                        {children}
+                      </h2>
+                    ),
+                    h3: ({ children }) => (
+                      <h3 className="text-xl font-semibold text-gray-900 mt-6 mb-3 pl-4 border-l-4 border-purple-500">
+                        {children}
+                      </h3>
+                    ),
+                    h4: ({ children }) => (
+                      <h4 className="text-lg font-semibold text-gray-900 mt-5 mb-2">
+                        {children}
+                      </h4>
+                    ),
+                    p: ({ children }) => (
+                      <p className="mb-4 leading-7 text-gray-700">
+                        {children}
+                      </p>
+                    ),
+                    ul: ({ children }) => (
+                      <ul className="mb-4 list-disc list-inside space-y-1">
+                        {children}
+                      </ul>
+                    ),
+                    li: ({ children }) => (
+                      <li className="text-gray-700 leading-6">
+                        {children}
+                      </li>
+                    ),
+                    blockquote: ({ children }) => (
+                      <blockquote className="border-l-4 border-purple-500 pl-6 py-2 bg-gray-50 rounded-r-lg italic text-gray-600 my-6">
+                        {children}
+                      </blockquote>
+                    ),
+                    strong: ({ children }) => (
+                      <strong className="font-semibold text-gray-900">
+                        {children}
+                      </strong>
+                    ),
+                    em: ({ children }) => (
+                      <em className="italic text-gray-600">
+                        {children}
+                      </em>
+                    ),
+                    code: ({ children }) => (
+                      <code className="bg-gray-100 text-red-600 px-2 py-1 rounded text-sm font-mono">
+                        {children}
+                      </code>
+                    ),
+                  }}
+                >
+                  {report.content}
+                </ReactMarkdown>
               </div>
 
               {report.usage && (
@@ -330,7 +419,95 @@ export const ReportsInsightsPage: React.FC = () => {
                         <div className="px-4 pb-4">
                           <div className="bg-gray-50 p-4 rounded-lg">
                             <div className="prose prose-purple max-w-none text-sm text-gray-700">
-                              <ReactMarkdown>{historyReport.content}</ReactMarkdown>
+                              <ReactMarkdown 
+                                remarkPlugins={[remarkGfm]}
+                                components={{
+                                  table: ({ children }) => (
+                                    <div className="overflow-x-auto my-4">
+                                      <table className="w-full border-collapse bg-white border border-gray-200 rounded-lg shadow-sm">
+                                        {children}
+                                      </table>
+                                    </div>
+                                  ),
+                                  thead: ({ children }) => (
+                                    <thead className="bg-gradient-to-r from-purple-600 to-purple-700 text-white">
+                                      {children}
+                                    </thead>
+                                  ),
+                                  th: ({ children }) => (
+                                    <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide border-b-2 border-purple-800">
+                                      {children}
+                                    </th>
+                                  ),
+                                  td: ({ children }) => (
+                                    <td className="px-4 py-3 text-sm text-gray-700 border-b border-gray-100">
+                                      {children}
+                                    </td>
+                                  ),
+                                  tbody: ({ children }) => (
+                                    <tbody className="divide-y divide-gray-100">
+                                      {children}
+                                    </tbody>
+                                  ),
+                                  h1: ({ children }) => (
+                                    <h1 className="text-2xl font-bold text-gray-900 mb-4 pb-2 border-b-2 border-purple-600">
+                                      {children}
+                                    </h1>
+                                  ),
+                                  h2: ({ children }) => (
+                                    <h2 className="text-xl font-semibold text-gray-900 mt-6 mb-3 pb-1 border-b border-purple-400">
+                                      {children}
+                                    </h2>
+                                  ),
+                                  h3: ({ children }) => (
+                                    <h3 className="text-lg font-semibold text-gray-900 mt-4 mb-2 pl-3 border-l-3 border-purple-500">
+                                      {children}
+                                    </h3>
+                                  ),
+                                  h4: ({ children }) => (
+                                    <h4 className="text-base font-semibold text-gray-900 mt-3 mb-2">
+                                      {children}
+                                    </h4>
+                                  ),
+                                  p: ({ children }) => (
+                                    <p className="mb-3 leading-6 text-gray-700">
+                                      {children}
+                                    </p>
+                                  ),
+                                  ul: ({ children }) => (
+                                    <ul className="mb-3 list-disc list-inside space-y-1">
+                                      {children}
+                                    </ul>
+                                  ),
+                                  li: ({ children }) => (
+                                    <li className="text-gray-700 leading-5 text-sm">
+                                      {children}
+                                    </li>
+                                  ),
+                                  blockquote: ({ children }) => (
+                                    <blockquote className="border-l-3 border-purple-500 pl-4 py-2 bg-gray-50 rounded-r-lg italic text-gray-600 my-4">
+                                      {children}
+                                    </blockquote>
+                                  ),
+                                  strong: ({ children }) => (
+                                    <strong className="font-semibold text-gray-900">
+                                      {children}
+                                    </strong>
+                                  ),
+                                  em: ({ children }) => (
+                                    <em className="italic text-gray-600">
+                                      {children}
+                                    </em>
+                                  ),
+                                  code: ({ children }) => (
+                                    <code className="bg-gray-100 text-red-600 px-1 py-0.5 rounded text-xs font-mono">
+                                      {children}
+                                    </code>
+                                  ),
+                                }}
+                              >
+                                {historyReport.content}
+                              </ReactMarkdown>
                             </div>
                           </div>
                         </div>

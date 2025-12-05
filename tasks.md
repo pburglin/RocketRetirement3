@@ -140,6 +140,11 @@ _General UI Requirements for all lists below: Sort items by highest value first,
   - [x] **Definitions**: Add a clearly visible tooltip or info box distinguishing "Expenses" (recurring/lifestyle costs) vs. "Liabilities" (debts/loans with balances).
 - [x] **Bug Fixes**:
   - [x] **PDF Export**: Fix layout engine to prevent page breaks from cutting off text or graphs in the generated PDF report. If this is not possible, lets remove the page breaks to avoid duplicated and cropped content between pages.
+- [x] **AI Insights & Reports Screen**:
+  - [x] Make Previous Reports entries collapsed by default (was already implemented)
+  - [x] Fix table rendering: Added remark-gfm plugin support and custom ReactMarkdown components for properly styled tables
+  - [x] Improve report design with professional document styling for section headers, typography, and visual hierarchy
+  - [x] Apply consistent styling to both current report and previous reports sections
 
 ### Create **Phase 9: Mobile Adaptation & Deployment**
 
