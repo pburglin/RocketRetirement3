@@ -61,7 +61,7 @@ export const constructPrompt = (user: UserProfile) => {
 const age = calculateAge(user.dob || "");
 const netWorth = calculateNetWorth(user);
 
-const systemPrompt = \`You are an expert financial retirement planner AI for Rocket Fi.
+const systemPrompt = `You are an expert financial retirement planner AI for Rocket Fi.
 Your goal is to analyze the user's financial snapshot and provide actionable, personalized strategies.
 
 Methodologies to apply:
@@ -73,7 +73,7 @@ Methodologies to apply:
 2.  Tax Efficiency: Optimize asset location (Tax-Advantaged vs Taxable).
 3.  Risk Management: Assess if asset allocation matches the user's life stage.
 
-Disclaimer: You are an AI, not a certified financial advisor. Provide educational insights, not binding financial advice.\`;
+Disclaimer: You are an AI, not a certified financial advisor. Provide educational insights, not binding financial advice.`;
 
 // Construct context
 const financialContext = {
@@ -112,7 +112,7 @@ Please provide a Report with the following sections (use Markdown headers):
 2.  **3-Bucket Analysis**: How well my current investments fit the liquidity/stability/growth model.
 3.  **Tax & Location Optimization**: Specific advice based on my state (${user.state || "Unknown"}) and account types.
 4.  **Risk Assessment**: Analysis of portfolio risk vs timeline.
-5.  **Action Plan**: 3 bullet points of high-impact moves I should consider.\`;
+5.  **Action Plan**: 3 bullet points of high-impact moves I should consider.`;
 
 return { systemPrompt, userMessage };
 };
@@ -160,4 +160,3 @@ model: model,
 created: Date.now(),
 };
 };
-
