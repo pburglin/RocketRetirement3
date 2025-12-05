@@ -1,5 +1,10 @@
 import { encryptData, decryptData } from "../utils/crypto";
 
+export type Timeframe =
+  | "Pre-Retirement"
+  | "Post-Retirement"
+  | "Pre and Post-Retirement";
+
 export interface Dependent {
   id: string;
   name: string;
@@ -10,14 +15,17 @@ export interface IncomeSource {
   id: string;
   name: string;
   amount: number; // Monthly
-  category: "Pre-Retirement" | "Post-Retirement" | "Pre and Post-Retirement";
+  category: Timeframe; // This acts as the timeframe for Income
+  details?: string;
 }
 
 export interface Expense {
   id: string;
   name: string;
   amount: number; // Monthly
-  retirementCategory: "Required" | "Nice-to-have";
+  retirementCategory: "Required" | "Nice-to-have"; // Priority
+  timeframe: Timeframe;
+  details?: string;
 }
 
 export interface Asset {
@@ -25,6 +33,8 @@ export interface Asset {
   name: string;
   value: number;
   depreciationRate: number; // Annual %
+  timeframe: Timeframe;
+  details?: string;
 }
 
 export interface Liability {
@@ -33,6 +43,8 @@ export interface Liability {
   balance: number;
   monthlyPayment: number;
   interestRate: number; // Annual %
+  timeframe: Timeframe;
+  details?: string;
 }
 
 export interface InvestmentAccount {
@@ -46,7 +58,10 @@ export interface InvestmentAccount {
     | "Investment (non-tax advantaged)";
   riskProfile: "Low" | "Medium" | "High";
   estimatedReturn: number; // Annual %
+  monthlyContribution: number; // New field
   accountNumberLast4: string;
+  timeframe: Timeframe;
+  details?: string;
 }
 
 export interface UserProfile {

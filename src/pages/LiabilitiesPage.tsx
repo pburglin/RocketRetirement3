@@ -2,7 +2,7 @@
 import React, { useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
 import { ModulePageLayout } from "../components/ModulePageLayout";
-import { Liability } from "../services/storage";
+import { Liability, Timeframe } from "../services/storage";
 
 const LIABILITY_SUGGESTIONS: Partial<Liability>[] = [
 {
@@ -10,30 +10,35 @@ name: "Primary Mortgage",
 balance: 350000,
 monthlyPayment: 2400,
 interestRate: 6.5,
+timeframe: "Pre and Post-Retirement",
 },
 {
 name: "Auto Loan",
 balance: 20000,
 monthlyPayment: 450,
 interestRate: 7,
+timeframe: "Pre-Retirement",
 },
 {
 name: "Credit Card Debt",
 balance: 5000,
 monthlyPayment: 150,
 interestRate: 20,
+timeframe: "Pre-Retirement",
 },
 {
 name: "Student Loan",
 balance: 25000,
 monthlyPayment: 300,
 interestRate: 5,
+timeframe: "Pre-Retirement",
 },
 {
 name: "HELOC",
 balance: 15000,
 monthlyPayment: 200,
 interestRate: 8,
+timeframe: "Pre and Post-Retirement",
 },
 ];
 
@@ -75,7 +80,7 @@ item.name.toLowerCase().includes(term.toLowerCase())
 renderItem={(item) => (
 <div>
 <h3 className="font-semibold text-gray-900">{item.name}</h3>
-<div className="text-sm text-gray-500 flex gap-4 mt-1">
+<div className="text-sm text-gray-500 flex flex-wrap gap-2 mt-1">
 <span className="font-medium text-red-600">
 Balance: ${item.balance.toLocaleString()}
 </span>
@@ -83,6 +88,14 @@ Balance: ${item.balance.toLocaleString()}
 <span className="text-xs bg-gray-100 px-2 py-0.5 rounded-full">
 {item.interestRate}% APR
 </span>
+<span className="px-2 py-0.5 rounded-full bg-gray-100 text-xs">
+{item.timeframe}
+</span>
+{item.details && (
+<span className="text-xs text-gray-400 truncate max-w-[150px]">
+{item.details}
+</span>
+)}
 </div>
 </div>
 )}
@@ -112,6 +125,10 @@ initialData?.monthlyPayment?.toString() || "",
 const [interestRate, setInterestRate] = React.useState(
 initialData?.interestRate?.toString() || "",
 );
+const [timeframe, setTimeframe] = React.useState<Timeframe>(
+initialData?.timeframe || "Pre and Post-Retirement",
+);
+const [details, setDetails] = React.useState(initialData?.details || "");
 
 useEffect(() => {
 if (initialData) {
@@ -119,6 +136,8 @@ setName(initialData.name || "");
 setBalance(initialData.balance?.toString() || "");
 setMonthlyPayment(initialData.monthlyPayment?.toString() || "");
 setInterestRate(initialData.interestRate?.toString() || "");
+setTimeframe(initialData.timeframe || "Pre and Post-Retirement");
+setDetails(initialData.details || "");
 }
 }, [initialData]);
 
@@ -129,6 +148,8 @@ name,
 balance: parseFloat(balance) || 0,
 monthlyPayment: parseFloat(monthlyPayment) || 0,
 interestRate: parseFloat(interestRate) || 0,
+timeframe,
+details,
 });
 };
 
@@ -183,6 +204,7 @@ className="block w-full rounded-md border-gray-300 pl-7 focus:border-blue-500 fo
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;div className=&quot;grid grid-cols-1 md:grid-cols-2 gap-4&quot;&gt;
 &lt;div&gt;
 &lt;label className=&quot;block text-sm font-medium text-gray-700&quot;&gt;
 Interest Rate (APR %)
@@ -195,6 +217,35 @@ step="0.01"
 value={interestRate}
 onChange={(e) => setInterestRate(e.target.value)}
 className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 border p-2"
+/>
+&lt;/div&gt;
+&lt;div&gt;
+&lt;label className=&quot;block text-sm font-medium text-gray-700&quot;&gt;
+Timeframe
+&lt;/label&gt;
+<select
+value={timeframe}
+onChange={(e) => setTimeframe(e.target.value as any)}
+className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 border p-2 bg-white"
+>
+&lt;option value=&quot;Pre and Post-Retirement&quot;&gt;
+Pre and Post-Retirement
+&lt;/option&gt;
+&lt;option value=&quot;Pre-Retirement&quot;&gt;Pre-Retirement&lt;/option&gt;
+&lt;option value=&quot;Post-Retirement&quot;&gt;Post-Retirement&lt;/option&gt;
+&lt;/select&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div&gt;
+&lt;label className=&quot;block text-sm font-medium text-gray-700&quot;&gt;
+Details (Optional)
+&lt;/label&gt;
+<textarea
+rows={3}
+value={details}
+onChange={(e) => setDetails(e.target.value)}
+className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 border p-2"
+placeholder="Additional notes..."
 />
 &lt;/div&gt;
 &lt;div className=&quot;flex justify-end gap-2 pt-2&quot;&gt;

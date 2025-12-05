@@ -1,33 +1,38 @@
 import React, { useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
 import { ModulePageLayout } from "../components/ModulePageLayout";
-import { Asset } from "../services/storage";
+import { Asset, Timeframe } from "../services/storage";
 
 const ASSET_SUGGESTIONS: Partial<Asset>[] = [
   {
     name: "Primary Residence",
     value: 450000,
     depreciationRate: -3, // Appreciation
+    timeframe: "Pre and Post-Retirement",
   },
   {
     name: "Family Vehicle",
     value: 35000,
     depreciationRate: 15,
+    timeframe: "Pre and Post-Retirement",
   },
   {
     name: "Secondary Vehicle",
     value: 20000,
     depreciationRate: 15,
+    timeframe: "Pre and Post-Retirement",
   },
   {
     name: "Jewelry & Art",
     value: 10000,
     depreciationRate: 0,
+    timeframe: "Pre and Post-Retirement",
   },
   {
     name: "Rental Property",
     value: 300000,
     depreciationRate: -2,
+    timeframe: "Pre and Post-Retirement",
   },
 ];
 
@@ -64,7 +69,7 @@ export const AssetsPage: React.FC = () => {
       renderItem={(item) => (
         <div>
           <h3 className="font-semibold text-gray-900">{item.name}</h3>
-          <div className="text-sm text-gray-500 flex gap-4 mt-1">
+          <div className="text-sm text-gray-500 flex flex-wrap gap-2 mt-1">
             <span className="font-medium text-gray-900">
               ${item.value.toLocaleString()}
             </span>
@@ -73,6 +78,14 @@ export const AssetsPage: React.FC = () => {
                 ? `Appreciation: ${Math.abs(item.depreciationRate)}% / yr`
                 : `Depreciation: ${item.depreciationRate}% / yr`}
             </span>
+            <span className="px-2 py-0.5 rounded-full bg-gray-100 text-xs">
+              {item.timeframe}
+            </span>
+            {item.details && (
+              <span className="text-xs text-gray-400 truncate max-w-[150px]">
+                {item.details}
+              </span>
+            )}
           </div>
         </div>
       )}
@@ -99,12 +112,18 @@ const AssetForm: React.FC<{
   const [depreciationRate, setDepreciationRate] = React.useState(
     initialData?.depreciationRate?.toString() || "0",
   );
+  const [timeframe, setTimeframe] = React.useState<Timeframe>(
+    initialData?.timeframe || "Pre and Post-Retirement",
+  );
+  const [details, setDetails] = React.useState(initialData?.details || "");
 
   useEffect(() => {
     if (initialData) {
       setName(initialData.name || "");
       setValue(initialData.value?.toString() || "");
       setDepreciationRate(initialData.depreciationRate?.toString() || "0");
+      setTimeframe(initialData.timeframe || "Pre and Post-Retirement");
+      setDetails(initialData.details || "");
     }
   }, [initialData]);
 
@@ -114,6 +133,8 @@ const AssetForm: React.FC<{
       name,
       value: parseFloat(value) || 0,
       depreciationRate: parseFloat(depreciationRate) || 0,
+      timeframe,
+      details,
     });
   };
 
@@ -147,21 +168,51 @@ const AssetForm: React.FC<{
           />
         </div>
       </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <label className="block text-sm font-medium text-gray-700">
+            Estimated Annual Depreciation %
+          </label>
+          <input
+            type="number"
+            required
+            step="0.1"
+            value={depreciationRate}
+            onChange={(e) => setDepreciationRate(e.target.value)}
+            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 border p-2"
+          />
+          <p className="mt-1 text-xs text-gray-500">
+            Use negative numbers for appreciation (e.g. -3 for 3% growth).
+          </p>
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700">
+            Timeframe
+          </label>
+          <select
+            value={timeframe}
+            onChange={(e) => setTimeframe(e.target.value as any)}
+            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 border p-2 bg-white"
+          >
+            <option value="Pre and Post-Retirement">
+              Pre and Post-Retirement
+            </option>
+            <option value="Pre-Retirement">Pre-Retirement</option>
+            <option value="Post-Retirement">Post-Retirement</option>
+          </select>
+        </div>
+      </div>
       <div>
         <label className="block text-sm font-medium text-gray-700">
-          Estimated Annual Depreciation %
+          Details (Optional)
         </label>
-        <input
-          type="number"
-          required
-          step="0.1"
-          value={depreciationRate}
-          onChange={(e) => setDepreciationRate(e.target.value)}
+        <textarea
+          rows={3}
+          value={details}
+          onChange={(e) => setDetails(e.target.value)}
           className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 border p-2"
+          placeholder="Additional notes..."
         />
-        <p className="mt-1 text-xs text-gray-500">
-          Use negative numbers for appreciation (e.g. -3 for 3% growth).
-        </p>
       </div>
       <div className="flex justify-end gap-2 pt-2">
         {onCancel && (

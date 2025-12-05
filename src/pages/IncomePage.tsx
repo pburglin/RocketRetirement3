@@ -68,13 +68,18 @@ export const IncomePage: React.FC = () => {
       renderItem={(item) => (
         <div>
           <h3 className="font-semibold text-gray-900">{item.name}</h3>
-          <div className="text-sm text-gray-500 flex gap-4 mt-1">
+          <div className="text-sm text-gray-500 flex flex-wrap gap-2 mt-1">
             <span className="font-medium text-green-600">
               ${item.amount.toLocaleString()}/mo
             </span>
             <span className="px-2 py-0.5 rounded-full bg-gray-100 text-xs">
               {item.category}
             </span>
+            {item.details && (
+              <span className="text-xs text-gray-400 truncate max-w-[200px]">
+                {item.details}
+              </span>
+            )}
           </div>
         </div>
       )}
@@ -101,18 +106,20 @@ const IncomeForm: React.FC<{
   const [category, setCategory] = React.useState<IncomeSource["category"]>(
     initialData?.category || "Pre-Retirement",
   );
+  const [details, setDetails] = React.useState(initialData?.details || "");
 
   useEffect(() => {
     if (initialData) {
       setName(initialData.name || "");
       setAmount(initialData.amount?.toString() || "");
       setCategory(initialData.category || "Pre-Retirement");
+      setDetails(initialData.details || "");
     }
   }, [initialData]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onSubmit({ name, amount: parseFloat(amount) || 0, category });
+    onSubmit({ name, amount: parseFloat(amount) || 0, category, details });
   };
 
   return (
@@ -151,7 +158,7 @@ const IncomeForm: React.FC<{
       </div>
       <div>
         <label className="block text-sm font-medium text-gray-700">
-          Income Category
+          Income Category (Timeframe)
         </label>
         <select
           value={category}
@@ -164,6 +171,18 @@ const IncomeForm: React.FC<{
             Pre and Post-Retirement
           </option>
         </select>
+      </div>
+      <div>
+        <label className="block text-sm font-medium text-gray-700">
+          Details (Optional)
+        </label>
+        <textarea
+          rows={3}
+          value={details}
+          onChange={(e) => setDetails(e.target.value)}
+          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 border p-2"
+          placeholder="Additional notes..."
+        />
       </div>
       <div className="flex justify-end gap-2 pt-2">
         {onCancel && (
