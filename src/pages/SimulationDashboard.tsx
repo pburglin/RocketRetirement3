@@ -18,6 +18,7 @@ import {
   CheckCircle,
   Info,
   Settings2,
+  Activity,
 } from "lucide-react";
 
 export const SimulationDashboard: React.FC = () => {
