@@ -12,6 +12,7 @@ import {
 
 interface ModulePageLayoutProps<T> {
   title: string;
+  singularTitle?: string;
   items: T[];
   onAdd: (item: Omit<T, "id">) => void;
   onEdit: (item: T) => void;
@@ -28,6 +29,7 @@ interface ModulePageLayoutProps<T> {
 
 export function ModulePageLayout<T extends { id: string }>({
   title,
+  singularTitle,
   items,
   onAdd,
   onEdit,
@@ -63,6 +65,9 @@ export function ModulePageLayout<T extends { id: string }>({
     setIsAdding(true);
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
+
+  // Determine the label for the Add button
+  const addItemLabel = singularTitle || title.slice(0, -1);
 
   return (
     <div className="max-w-4xl mx-auto p-6 space-y-6">
@@ -100,7 +105,7 @@ export function ModulePageLayout<T extends { id: string }>({
             ) : (
               <Plus className="w-4 h-4 mr-2" />
             )}
-            {editingItem ? "Edit Item" : `Add New ${title.slice(0, -1)}`}
+            {editingItem ? "Edit Item" : `Add New ${addItemLabel}`}
           </span>
           {isAdding ? (
             <ChevronUp className="w-5 h-5 text-gray-500" />
