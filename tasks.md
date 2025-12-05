@@ -109,7 +109,7 @@ _General UI Requirements for all lists below: Sort items by highest value first,
 ## Phase 8: Fixing functional issues
 
 - [x] the labels in the Y axis in graphs in screens Goals and Simulations are getting cropped. Let's add a larger horizontal margin to avoid it. Make the margin dynamically larger based on the number of digits we present in the Y axis of the graph.
-- [ ] the user's birth date is critical for all our reports. lets request user to setup the user profile before he can access the Goals, Simulations and Reports pages.
+- [x] the user's birth date is critical for all our reports. lets request user to setup the user profile before he can access the Goals, Simulations and Reports pages.
 - [ ] in Liabilities screen, I see "Add New Liabilitie". This is incorrect, it should show "Add New Liability".
 - [ ] add tips to help the user enter most accurate information. for example, in Investment screen "Risk Profile" field we can say "Use Low for Checking, Savings, CDs etc; Medium for S&P 500 ETF and mutual funds; High for riskier leveraged investment instruments like TQQQ"
 - [ ] to help user enter comprehensive financial profile, lets include clickable examples for each category like Investments, Income, Expenses etc. for example, in Investments screen, when user clicks "Add New Investment Account", we can show top 5 most common options user still did not enter, including "Checking", "Savings", "Brokerage", "401K", "IRA" etc. same thing for the other categories. for example, in Expenses we can include "Car Insurance", "Health Insurance", "Groceries", "Utilities" etc.
