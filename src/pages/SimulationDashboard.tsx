@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from "react";
 import { useAuth } from "../context/AuthContext";
+import { usePlanning } from "../context/PlanningContext";
 import { calculateAge, SimulationResult } from "../utils/calculations";
 import {
   LineChart,
@@ -23,15 +24,15 @@ import {
 
 export const SimulationDashboard: React.FC = () => {
   const { user } = useAuth();
+  const { assumptions, updateAssumption } = usePlanning();
 
-  // Simulation Parameters
+  // Destructure assumptions for easier access
+  const { lifeExpectancy, inflationRate, annualRetirementSpending } = assumptions;
+
+  // Simulation Parameters (these remain local to simulation)
   const [iterations, setIterations] = useState(50);
   const [volatility, setVolatility] = useState(15); // Standard deviation %
   const [meanReturn, setMeanReturn] = useState(7); // %
-  const [lifeExpectancy, setLifeExpectancy] = useState(90);
-  const [inflationRate, setInflationRate] = useState(3);
-  const [annualRetirementSpending, setAnnualRetirementSpending] =
-    useState(60000);
 
   const [simulations, setSimulations] = useState<SimulationResult[][]>([]);
   const [isRunning, setIsRunning] = useState(false);
@@ -218,7 +219,7 @@ export const SimulationDashboard: React.FC = () => {
                     type="number"
                     value={annualRetirementSpending}
                     onChange={(e) =>
-                      setAnnualRetirementSpending(Number(e.target.value))
+                      updateAssumption('annualRetirementSpending', Number(e.target.value))
                     }
                     className="block w-36 rounded-md border-gray-300 border p-2 pl-6 text-sm"
                   />
@@ -239,7 +240,7 @@ export const SimulationDashboard: React.FC = () => {
                       type="number"
                       value={lifeExpectancy}
                       onChange={(e) =>
-                        setLifeExpectancy(Number(e.target.value))
+                        updateAssumption('lifeExpectancy', Number(e.target.value))
                       }
                       className="block w-24 rounded-md border-gray-300 border p-2 text-sm"
                     />
@@ -252,7 +253,7 @@ export const SimulationDashboard: React.FC = () => {
                       type="number"
                       step="0.1"
                       value={inflationRate}
-                      onChange={(e) => setInflationRate(Number(e.target.value))}
+                      onChange={(e) => updateAssumption('inflationRate', Number(e.target.value))}
                       className="block w-24 rounded-md border-gray-300 border p-2 text-sm"
                     />
                   </div>

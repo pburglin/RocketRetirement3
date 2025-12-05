@@ -1,5 +1,6 @@
 import React from "react";
 import { AuthProvider } from "./context/AuthContext";
+import { PlanningProvider } from "./context/PlanningContext";
 import {
   BrowserRouter,
   Routes,
@@ -68,7 +69,8 @@ const RequireProfile: React.FC<{ children: React.ReactElement }> = ({
 function App() {
   return (
     <AuthProvider>
-      <BrowserRouter>
+      <PlanningProvider>
+        <BrowserRouter>
         <div className="min-h-screen bg-gray-50 flex flex-col">
           <Header />
           <main className="flex-grow">
@@ -202,6 +204,7 @@ function App() {
           </footer>
         </div>
       </BrowserRouter>
+      </PlanningProvider>
     </AuthProvider>
   );
 }

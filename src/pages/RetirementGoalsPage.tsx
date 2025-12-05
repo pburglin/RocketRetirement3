@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { useAuth } from "../context/AuthContext";
+import { usePlanning } from "../context/PlanningContext";
 import {
   calculateAge,
   runProjection,
@@ -19,13 +20,10 @@ import { Settings, TrendingUp } from "lucide-react";
 
 export const RetirementGoalsPage: React.FC = () => {
   const { user } = useAuth();
+  const { assumptions, updateAssumption } = usePlanning();
 
-  // Local State for assumptions that aren't necessarily persisted or are just defaults
-  const [retirementAge, setRetirementAge] = useState(65);
-  const [lifeExpectancy, setLifeExpectancy] = useState(90);
-  const [inflationRate, setInflationRate] = useState(3);
-  const [annualRetirementSpending, setAnnualRetirementSpending] =
-    useState(60000);
+  // Destructure assumptions for easier access
+  const { retirementAge, lifeExpectancy, inflationRate, annualRetirementSpending } = assumptions;
   const [data, setData] = useState<SimulationResult[]>([]);
 
   useEffect(() => {
@@ -34,7 +32,7 @@ export const RetirementGoalsPage: React.FC = () => {
       const currentAnnualExpenses =
         (user.expenses?.reduce((sum, e) => sum + e.amount, 0) || 0) * 12;
       if (annualRetirementSpending === 60000 && currentAnnualExpenses > 0) {
-        setAnnualRetirementSpending(currentAnnualExpenses);
+        updateAssumption('annualRetirementSpending', currentAnnualExpenses);
       }
 
       const results = runProjection(
@@ -52,6 +50,7 @@ export const RetirementGoalsPage: React.FC = () => {
     lifeExpectancy,
     inflationRate,
     annualRetirementSpending,
+    updateAssumption,
   ]);
 
   const leftMargin = useMemo(() => {
@@ -91,7 +90,7 @@ export const RetirementGoalsPage: React.FC = () => {
               min={currentAge + 1}
               max={80}
               value={retirementAge}
-              onChange={(e) => setRetirementAge(Number(e.target.value))}
+              onChange={(e) => updateAssumption('retirementAge', Number(e.target.value))}
               className="w-full mt-2"
             />
             <div className="text-right font-bold text-blue-600">
@@ -106,7 +105,7 @@ export const RetirementGoalsPage: React.FC = () => {
             <input
               type="number"
               value={lifeExpectancy}
-              onChange={(e) => setLifeExpectancy(Number(e.target.value))}
+              onChange={(e) => updateAssumption('lifeExpectancy', Number(e.target.value))}
               className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 border p-2"
             />
           </div>
@@ -119,7 +118,7 @@ export const RetirementGoalsPage: React.FC = () => {
               type="number"
               step="0.1"
               value={inflationRate}
-              onChange={(e) => setInflationRate(Number(e.target.value))}
+              onChange={(e) => updateAssumption('inflationRate', Number(e.target.value))}
               className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 border p-2"
             />
           </div>
@@ -136,7 +135,7 @@ export const RetirementGoalsPage: React.FC = () => {
                 type="number"
                 value={annualRetirementSpending}
                 onChange={(e) =>
-                  setAnnualRetirementSpending(Number(e.target.value))
+                  updateAssumption('annualRetirementSpending', Number(e.target.value))
                 }
                 className="block w-full rounded-md border-gray-300 pl-7 focus:border-blue-500 focus:ring-blue-500 border p-2"
               />
