@@ -105,13 +105,44 @@ Disclaimer: You are an AI, not a certified financial advisor. Provide educationa
 ${JSON.stringify(financialContext, null, 2)}
 \`\`\`
 
-Please provide a Report with the following sections (use Markdown headers):
+Please provide a **professional financial analysis report** with the following sections (use proper Markdown formatting):
 
-1.  **Executive Summary**: Health check based on Net Worth and Age.
-2.  **3-Bucket Analysis**: How well my current investments fit the liquidity/stability/growth model.
-3.  **Tax & Location Optimization**: Specific advice based on my state (${user.state || "Unknown"}) and account types.
-4.  **Risk Assessment**: Analysis of portfolio risk vs timeline.
-5.  **Action Plan**: 3 bullet points of high-impact moves I should consider.`;
+## 1. Executive Summary
+- **Overall Financial Health**: Health check based on Net Worth and Age
+- **Key Metrics Summary**: Present in a table format
+- **Primary Concerns**: 2-3 bullet points
+
+## 2. 3-Bucket Strategy Analysis
+- **Current Allocation**: Table showing current vs recommended distribution
+- **Gap Analysis**: Where improvements are needed
+- **Specific Recommendations**: Bullet-pointed actionable advice
+
+## 3. Tax Optimization & Location Strategy
+- **State-Specific Considerations**: Based on ${user.state || "Unknown"} tax implications
+- **Account Type Analysis**: Tax-advantaged vs taxable account optimization
+- **Strategic Recommendations**: Numbered action items
+
+## 4. Risk Assessment & Portfolio Health
+- **Risk Tolerance Analysis**: Age-appropriate risk level assessment
+- **Diversification Review**: Current diversification vs recommendations
+- **Risk Factors**: Bullet points of potential concerns
+
+## 5. Strategic Action Plan
+- **Immediate Actions** (Next 30 days): 3 prioritized items
+- **Short-term Goals** (3-6 months): 3 strategic initiatives
+- **Long-term Planning** (6+ months): 3 roadmap items
+
+**Formatting Requirements**:
+- Use **bold text** for section headers and important terms
+- Use *italic text* for emphasis and financial terms
+- Create **tables** for numerical data and comparisons
+- Use **bullet points** (- or •) for lists and recommendations
+- Use **numbered lists** (1. 2. 3.) for step-by-step actions
+- Include appropriate spacing between sections
+- Use "$X,XXX" format for all monetary values
+- Include percentage changes and ratios where relevant
+
+**Tone**: Professional, consultative, and actionable. Focus on specific, measurable recommendations.`;
 
   return { systemPrompt, userMessage };
 };
