@@ -1,30 +1,5 @@
 # Project Rocket Fi - Consolidated Development Tasks
 
-## 🚨 CRITICAL BUILD ERRORS
-- [x] Fix the following build errors:
-    ```text
-
-up to date, audited 491 packages in 572ms
-
-118 packages are looking for funding
-  run `npm fund` for details
-
-2 moderate severity vulnerabilities
-
-To address all issues (including breaking changes), run:
-  npm audit fix --force
-
-Run `npm audit` for details.
-
-> rocket-fi@0.1.0 build
-> tsc && vite build
-
-src/pages/SimulationDashboard.tsx(352,18): error TS2304: Cannot find name 'Activity'.
-    ```
-
-✅ **RESOLVED**: Added missing `Activity` import from lucide-react library.
-
-
 ## Phase 1: Project Setup & Core Architecture
 
 - [x] **Initialize Project**: Setup React with Vite and Tailwind CSS.
@@ -146,4 +121,4 @@ _General UI Requirements for all lists below: Sort items by highest value first,
 - [x] Liability form should have required fields for Name and Balance, and optional fields for everything else. this will allow user to enter future liabilities like "Child's Wedding" etc.
 - [x] in Financial Dashboard screen, add a Financial Snapshot section with cards for: Total Assets, Total Liabilities, Net Worth. add a Monthly Cash Flow section with cards for: Total Monthly Income, Total Monthly Expenses, Monthly Surplus/Deficit.
 - [x] in Simulations screen, add verbiage and insights to help user understand the simulation results
-- [ ] in Simulations screen, allow user to change the life expectancy and take it into account in our simulations. it seems to be hardcoded to 90 years. also allow user to set inflation rate and "Annual Retirement Spending (Today's Dollars)".
+- [x] in Simulations screen, allow user to change the life expectancy and take it into account in our simulations. it seems to be hardcoded to 90 years. also allow user to set inflation rate and "Annual Retirement Spending (Today's Dollars)".

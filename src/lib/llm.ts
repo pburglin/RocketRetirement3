@@ -124,10 +124,19 @@ export const fetchLLMAnalysis = async (
     throw new Error("API Key is missing. Please check your .env file.");
   }
 
+  // Debug: Log the API key format (without exposing the full key)
+  console.log("API Key Debug Info:", {
+    exists: !!OPENROUTER_API_KEY,
+    startsWithSkOrV1: OPENROUTER_API_KEY?.startsWith('sk-or-v1-'),
+    length: OPENROUTER_API_KEY?.length,
+    firstChars: OPENROUTER_API_KEY?.substring(0, 12) + '...',
+    model: model
+  });
+
   const { systemPrompt, userMessage } = constructPrompt(user);
 
   const response = await fetch(
-    "[https://openrouter.ai/api/v1/chat/completions](https://openrouter.ai/api/v1/chat/completions)",
+    "https://openrouter.ai/api/v1/chat/completions",
     {
       method: "POST",
       headers: {
@@ -146,9 +155,17 @@ export const fetchLLMAnalysis = async (
     },
   );
 
+  console.log("OpenRouter Response Status:", response.status, response.statusText);
+
   if (!response.ok) {
     const err = await response.json();
-    throw new Error(err.error?.message || "Failed to fetch AI response");
+    console.error("OpenRouter API Error Details:", {
+      status: response.status,
+      statusText: response.statusText,
+      error: err,
+      headers: Object.fromEntries(response.headers.entries())
+    });
+    throw new Error(err.error?.message || `Failed to fetch AI response: ${response.status} ${response.statusText}`);
   }
 
   const data = await response.json();
