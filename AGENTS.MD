@@ -26,6 +26,7 @@ This file provides guidance to agents when working with code in this repository.
 - default to small components
 - default to small files and diffs
 - use Vite for hot deploy
+- check source code before implementing tasks; if code already implements the requirement, update the task status in tasks.md
 
 When using CLI tools:
 
@@ -49,6 +50,7 @@ When using CLI tools:
 - do not hard code colors
 - do not use `div`s if we have a component already
 - do not add new heavy dependencies without approval
+- do not forget to update the task status in tasks.md as we implement tasks
 
 ### Git Commit Standardization
 
