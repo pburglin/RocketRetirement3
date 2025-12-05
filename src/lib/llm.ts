@@ -1,6 +1,6 @@
 import { UserProfile } from "../services/storage";
 
-const OPENROUTER_API_KEY = import.meta.env.VITE_OPENROUTER_API_KEY;
+const OPENROUTER_API_KEY = (import.meta as any).env.VITE_OPENROUTER_API_KEY;
 const SITE_URL = window.location.origin;
 const SITE_NAME = "Rocket Fi";
 
