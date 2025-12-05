@@ -1,5 +1,61 @@
 # Project Rocket Fi - Consolidated Development Tasks
 
+## 🚨 CRITICAL BUILD ERRORS
+- [ ] Fix the following build errors:
+    ```text
+
+up to date, audited 708 packages in 756ms
+
+137 packages are looking for funding
+  run `npm fund` for details
+
+2 moderate severity vulnerabilities
+
+To address all issues (including breaking changes), run:
+  npm audit fix --force
+
+Run `npm audit` for details.
+
+> rocket-fi@0.1.0 build
+> tsc && vite build
+
+src/pages/InvestmentsPage.tsx(173,1): error TS1109: Expression expected.
+src/pages/InvestmentsPage.tsx(173,3): error TS1109: Expression expected.
+src/pages/InvestmentsPage.tsx(174,1): error TS1109: Expression expected.
+src/pages/InvestmentsPage.tsx(176,1): error TS1109: Expression expected.
+src/pages/InvestmentsPage.tsx(176,3): error TS1109: Expression expected.
+src/pages/InvestmentsPage.tsx(177,1): error TS1109: Expression expected.
+src/pages/InvestmentsPage.tsx(178,1): error TS1109: Expression expected.
+src/pages/InvestmentsPage.tsx(178,3): error TS1109: Expression expected.
+src/pages/InvestmentsPage.tsx(179,1): error TS1109: Expression expected.
+src/pages/InvestmentsPage.tsx(179,3): error TS1109: Expression expected.
+src/pages/InvestmentsPage.tsx(180,1): error TS1109: Expression expected.
+src/pages/InvestmentsPage.tsx(181,1): error TS1109: Expression expected.
+src/pages/InvestmentsPage.tsx(181,3): error TS1109: Expression expected.
+src/pages/InvestmentsPage.tsx(182,1): error TS1109: Expression expected.
+src/pages/InvestmentsPage.tsx(182,3): error TS1109: Expression expected.
+src/pages/InvestmentsPage.tsx(183,1): error TS1109: Expression expected.
+src/pages/InvestmentsPage.tsx(184,1): error TS1109: Expression expected.
+src/pages/InvestmentsPage.tsx(184,3): error TS1109: Expression expected.
+src/pages/InvestmentsPage.tsx(185,1): error TS1109: Expression expected.
+src/pages/InvestmentsPage.tsx(185,3): error TS1109: Expression expected.
+src/pages/InvestmentsPage.tsx(220,2): error TS17008: JSX element 'form' has no corresponding closing tag.
+src/pages/InvestmentsPage.tsx(250,2): error TS17008: JSX element 'div' has no corresponding closing tag.
+src/pages/InvestmentsPage.tsx(270,2): error TS17008: JSX element 'div' has no corresponding closing tag.
+src/pages/InvestmentsPage.tsx(274,2): error TS17008: JSX element 'div' has no corresponding closing tag.
+src/pages/InvestmentsPage.tsx(275,2): error TS17008: JSX element 'div' has no corresponding closing tag.
+src/pages/InvestmentsPage.tsx(276,2): error TS17008: JSX element 'span' has no corresponding closing tag.
+src/pages/InvestmentsPage.tsx(297,2): error TS17008: JSX element 'select' has no corresponding closing tag.
+src/pages/InvestmentsPage.tsx(316,2): error TS17008: JSX element 'select' has no corresponding closing tag.
+src/pages/InvestmentsPage.tsx(351,2): error TS17008: JSX element 'select' has no corresponding closing tag.
+src/pages/InvestmentsPage.tsx(378,1): error TS1109: Expression expected.
+src/pages/InvestmentsPage.tsx(378,4): error TS1005: ')' expected.
+src/pages/InvestmentsPage.tsx(385,2): error TS1381: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+src/pages/InvestmentsPage.tsx(395,1): error TS1381: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+src/pages/InvestmentsPage.tsx(397,1): error TS1005: '</' expected.
+    ```
+
+
 ## Phase 1: Project Setup & Core Architecture
 
 - [x] **Initialize Project**: Setup React with Vite and Tailwind CSS.
@@ -106,7 +162,7 @@ _General UI Requirements for all lists below: Sort items by highest value first,
   - [x] **Insights**: Limit Pre/Post retirement insight tables to Top 5 items (collapsible "Show More").
   - [x] **Loading State**: "Crunching the numbers..." with spinner.
   - [ ] **Model Selection Enhancements**:
-    - [ ] **Expand Model List**: Query the OpenRouter API to list *all* available free models dynamically, rather than a hardcoded selection.
+    - [ ] **Expand Model List**: Query the OpenRouter API to list _all_ available free models dynamically, rather than a hardcoded selection.
   - [ ] **User Guidance**: Add tooltip/help text suggesting users try different models to obtain diverse financial perspectives or "second opinions."
 - [ ] **Report History & UI**:
   - [ ] **History Logic**: Persist generated reports in LocalStorage. Display the most recent report at the top (expanded) and previous reports at the bottom (collapsed/accordion style).

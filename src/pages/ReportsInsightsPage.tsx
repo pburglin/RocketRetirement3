@@ -73,28 +73,28 @@ export const ReportsInsightsPage: React.FC = () => {
 
     setExporting(true);
     try {
-      const element = document.getElementById('report-content');
+      const element = document.getElementById("report-content");
       if (!element) return;
 
       const canvas = await html2canvas(element, {
         scale: 2,
         useCORS: true,
-        backgroundColor: '#ffffff',
-        allowTaint: true
+        backgroundColor: "#ffffff",
+        allowTaint: true,
       });
 
-      const imgData = canvas.toDataURL('image/png');
-      const pdf = new jsPDF('p', 'mm', 'a4');
-      
+      const imgData = canvas.toDataURL("image/png");
+      const pdf = new jsPDF("p", "mm", "a4");
+
       // PDF page dimensions (A4)
       const pdfWidth = 210;
       const pdfHeight = 295;
-      
+
       // Margins (20mm on each side)
       const margin = 20;
-      const imgWidth = pdfWidth - (margin * 2); // Content width with margins
-      const pageHeight = pdfHeight - (margin * 2); // Content height with margins
-      
+      const imgWidth = pdfWidth - margin * 2; // Content width with margins
+      const pageHeight = pdfHeight - margin * 2; // Content height with margins
+
       // Calculate scaled image dimensions
       const imgHeight = (canvas.height * imgWidth) / canvas.width;
       let heightLeft = imgHeight;
@@ -102,21 +102,21 @@ export const ReportsInsightsPage: React.FC = () => {
       let position = margin; // Start with top margin
 
       // Add first page with image
-      pdf.addImage(imgData, 'PNG', margin, position, imgWidth, imgHeight);
+      pdf.addImage(imgData, "PNG", margin, position, imgWidth, imgHeight);
       heightLeft -= pageHeight;
 
       // Add additional pages if content is longer than one page
       while (heightLeft >= 0) {
         position = heightLeft - imgHeight + margin;
         pdf.addPage();
-        pdf.addImage(imgData, 'PNG', margin, position, imgWidth, imgHeight);
+        pdf.addImage(imgData, "PNG", margin, position, imgWidth, imgHeight);
         heightLeft -= pageHeight;
       }
 
-      const timestamp = new Date().toISOString().split('T')[0];
+      const timestamp = new Date().toISOString().split("T")[0];
       pdf.save(`rocketfi_report_${timestamp}.pdf`);
     } catch (error) {
-      console.error('Error generating PDF:', error);
+      console.error("Error generating PDF:", error);
     } finally {
       setExporting(false);
       setShowExportModal(false);
@@ -250,7 +250,10 @@ export const ReportsInsightsPage: React.FC = () => {
               </div>
 
               <div className="p-8">
-                <div id="report-content" className="report-content prose prose-slate max-w-none">
+                <div
+                  id="report-content"
+                  className="report-content prose prose-slate max-w-none"
+                >
                   <style>{`
                     .report-content {
                       font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
@@ -377,33 +380,82 @@ export const ReportsInsightsPage: React.FC = () => {
                   <ReactMarkdown
                     remarkPlugins={[remarkGfm]}
                     components={{
-                      h1: ({ node, ...props }) => <h1 className="text-3xl font-bold text-gray-900 mb-8 pb-4 border-b-3 border-purple-600" {...props} />,
+                      h1: ({ node, ...props }) => (
+                        <h1
+                          className="text-3xl font-bold text-gray-900 mb-8 pb-4 border-b-3 border-purple-600"
+                          {...props}
+                        />
+                      ),
                       h2: ({ node, ...props }) => (
-                        <h2 className="text-2xl font-semibold text-gray-800 mt-8 mb-4 pb-2 border-b-2 border-gray-300" {...props} />
+                        <h2
+                          className="text-2xl font-semibold text-gray-800 mt-8 mb-4 pb-2 border-b-2 border-gray-300"
+                          {...props}
+                        />
                       ),
                       h3: ({ node, ...props }) => (
-                        <h3 className="text-xl font-semibold text-gray-700 mt-6 mb-3" {...props} />
+                        <h3
+                          className="text-xl font-semibold text-gray-700 mt-6 mb-3"
+                          {...props}
+                        />
                       ),
-                      p: ({ node, ...props }) => <p className="mb-4 text-gray-700 leading-relaxed" {...props} />,
-                      strong: ({ node, ...props }) => <strong className="font-semibold text-gray-900" {...props} />,
-                      em: ({ node, ...props }) => <em className="italic text-gray-600" {...props} />,
-                      ul: ({ node, ...props }) => <ul className="mb-6 space-y-2" {...props} />,
-                      ol: ({ node, ...props }) => <ol className="mb-6 space-y-2" {...props} />,
-                      li: ({ node, ...props }) => <li className="text-gray-700 leading-relaxed" {...props} />,
+                      p: ({ node, ...props }) => (
+                        <p
+                          className="mb-4 text-gray-700 leading-relaxed"
+                          {...props}
+                        />
+                      ),
+                      strong: ({ node, ...props }) => (
+                        <strong
+                          className="font-semibold text-gray-900"
+                          {...props}
+                        />
+                      ),
+                      em: ({ node, ...props }) => (
+                        <em className="italic text-gray-600" {...props} />
+                      ),
+                      ul: ({ node, ...props }) => (
+                        <ul className="mb-6 space-y-2" {...props} />
+                      ),
+                      ol: ({ node, ...props }) => (
+                        <ol className="mb-6 space-y-2" {...props} />
+                      ),
+                      li: ({ node, ...props }) => (
+                        <li
+                          className="text-gray-700 leading-relaxed"
+                          {...props}
+                        />
+                      ),
                       table: ({ node, ...props }) => (
                         <div className="overflow-x-auto mb-6">
-                          <table className="min-w-full border border-gray-200 rounded-lg overflow-hidden shadow-sm" {...props} />
+                          <table
+                            className="min-w-full border border-gray-200 rounded-lg overflow-hidden shadow-sm"
+                            {...props}
+                          />
                         </div>
                       ),
-                      thead: ({ node, ...props }) => <thead className="bg-purple-600 text-white" {...props} />,
+                      thead: ({ node, ...props }) => (
+                        <thead
+                          className="bg-purple-600 text-white"
+                          {...props}
+                        />
+                      ),
                       th: ({ node, ...props }) => (
-                        <th className="px-4 py-3 text-left font-semibold text-sm" {...props} />
+                        <th
+                          className="px-4 py-3 text-left font-semibold text-sm"
+                          {...props}
+                        />
                       ),
                       td: ({ node, ...props }) => (
-                        <td className="px-4 py-3 text-sm border-b border-gray-100" {...props} />
+                        <td
+                          className="px-4 py-3 text-sm border-b border-gray-100"
+                          {...props}
+                        />
                       ),
                       tr: ({ node, ...props }) => (
-                        <tr className="hover:bg-gray-50 transition-colors" {...props} />
+                        <tr
+                          className="hover:bg-gray-50 transition-colors"
+                          {...props}
+                        />
                       ),
                     }}
                   >
