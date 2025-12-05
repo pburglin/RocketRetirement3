@@ -1,4 +1,3 @@
-import React from "react";
 import { AuthProvider } from "./context/AuthContext";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { Header } from "./components/Header";
@@ -40,7 +39,7 @@ function App() {
               <Route path="/" element={<LandingPage />} />
               <Route
                 path="/how-it-works"
-                element={<Navigate to="/#how-it-works" replace />}
+                element={<Navigate to="/\#how-it-works" replace />}
               />
               <Route path="/privacy" element={<PrivacyPolicyPage />} />
               <Route path="/faq" element={<FAQPage />} />

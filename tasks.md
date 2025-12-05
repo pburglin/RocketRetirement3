@@ -1,28 +1,5 @@
 # Project Rocket Fi - Consolidated Development Tasks
 
-## 🚨 CRITICAL BUILD ERRORS
-- [ ] Fix the following build errors:
-    ```text
-
-up to date, audited 313 packages in 381ms
-
-54 packages are looking for funding
-  run `npm fund` for details
-
-2 moderate severity vulnerabilities
-
-To address all issues (including breaking changes), run:
-  npm audit fix --force
-
-Run `npm audit` for details.
-
-> rocket-fi@0.1.0 build
-> tsc && vite build
-
-src/App.tsx(1,1): error TS6133: 'React' is declared but its value is never read.
-    ```
-
-
 ## Phase 1: Project Setup & Core Architecture
 
 - [x] **Initialize Project**: Setup React with Vite and Tailwind CSS.
@@ -36,21 +13,21 @@ src/App.tsx(1,1): error TS6133: 'React' is declared but its value is never read.
 
 ## Phase 2: Landing Page & Static Content
 
-- [ ] **Modern Landing Page**:
-  - [ ] Implement "How It Works" section.
-  - [ ] Add "System in Action" section displaying 4 screenshots (`/public` directory) in alphabetical order.
-  - [ ] Make screenshots clickable: Open modal with 90% screen width, gray background navigation buttons, and close on Esc/outside click.
-  - [ ] Add disclaimer: "Financial advisors cost $3k-$5k; this tool offers insights for a fraction of that cost but does not replace professional advice."
-  - [ ] Remove "Track Your Progress" section; replace "Run Simulations" text with "Gain New Insights and Define Your Strategy using AI".
-- [ ] **Header Navigation**:
-  - [ ] Show "Login" / "Sign Up Free" only for anonymous users.
-  - [ ] Show Red "Logout" button only for authenticated users.
-- [ ] **Privacy Policy**:
-  - [ ] Update text to emphasize: No database, local encrypted storage, anonymous metrics only, minimal PII collection.
-- [ ] **FAQ Page**:
-  - [ ] Add section on Monetization (currently free, potential future subscription, no data selling).
-  - [ ] Add Mermaid.js diagrams illustrating: Browser Client <-> Local Storage (Encrypted) and Rocket Fi <-> OpenRouter AI (Anonymized).
-  - [ ] Replace all "TBD" placeholders with actual content.
+- [x] **Modern Landing Page**:
+  - [x] Implement "How It Works" section.
+  - [x] Add "System in Action" section displaying 4 screenshots (`/public` directory) in alphabetical order.
+  - [x] Make screenshots clickable: Open modal with 90% screen width, gray background navigation buttons, and close on Esc/outside click.
+  - [x] Add disclaimer: "Financial advisors cost $3k-$5k; this tool offers insights for a fraction of that cost but does not replace professional advice."
+  - [x] Remove "Track Your Progress" section; replace "Run Simulations" text with "Gain New Insights and Define Your Strategy using AI".
+- [x] **Header Navigation**:
+  - [x] Show "Login" / "Sign Up Free" only for anonymous users.
+  - [x] Show Red "Logout" button only for authenticated users.
+- [x] **Privacy Policy**:
+  - [x] Update text to emphasize: No database, local encrypted storage, anonymous metrics only, minimal PII collection.
+- [x] **FAQ Page**:
+  - [x] Add section on Monetization (currently free, potential future subscription, no data selling).
+  - [x] Add Mermaid.js diagrams illustrating: Browser Client <-> Local Storage (Encrypted) and Rocket Fi <-> OpenRouter AI (Anonymized).
+  - [x] Replace all "TBD" placeholders with actual content.
 
 ## Phase 3: User Profile & Data Management
 
