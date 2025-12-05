@@ -305,8 +305,11 @@ export const fetchLLMAnalysis = async (
 
   const { systemPrompt, userMessage } = constructPrompt(user, promptType);
   
-  // Use custom message if provided (for chat functionality)
-  const finalUserMessage = customMessage || userMessage;
+  // For chat mode, append the user's question to the financial context
+  let finalUserMessage = userMessage;
+  if (promptType === 'chat' && customMessage) {
+    finalUserMessage = `${userMessage}\n\n---\n\n**User Question**: ${customMessage}\n\nPlease provide personalized advice based on the financial context above.`;
+  }
 
   const response = await fetch(
     "https://openrouter.ai/api/v1/chat/completions",

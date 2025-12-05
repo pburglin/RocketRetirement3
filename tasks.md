@@ -145,6 +145,11 @@ _General UI Requirements for all lists below: Sort items by highest value first,
   - [x] Fix table rendering: Added remark-gfm plugin support and custom ReactMarkdown components for properly styled tables
   - [x] Improve report design with professional document styling for section headers, typography, and visual hierarchy
   - [x] Apply consistent styling to both current report and previous reports sections
+  - [x] **Ask The Planner Chat Improvements**:
+    - [x] Fix markdown rendering in chat messages to properly display bold, italic, and other formatting
+    - [x] Improve context sharing to ensure user financial data is properly included in chat sessions
+    - [x] Fix context replacement bug where user questions replaced financial data instead of appending to it
+    - [x] Enhance user experience with properly formatted AI responses that include personalized financial analysis
 
 ### Create **Phase 9: Mobile Adaptation & Deployment**
 

@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 import { MessageCircle, Send, Loader2, User, Bot, ChevronDown, ChevronUp } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 import { fetchLLMAnalysis } from "../lib/llm";
@@ -41,7 +43,7 @@ export const AIAssistant: React.FC<AIAssistantProps> = ({ mode, onClose }) => {
         user,
         "google/gemma-3-27b-it:free", // Default model
         mode === 'beneficiary' ? 'beneficiary' : 'chat',
-        mode === 'chat' ? inputMessage.trim() : undefined
+        inputMessage.trim() // Pass the user's message as customMessage
       );
 
       const assistantMessage: Message = {
@@ -149,9 +151,54 @@ export const AIAssistant: React.FC<AIAssistantProps> = ({ mode, onClose }) => {
                         : 'bg-gray-100 text-gray-900'
                     }`}
                   >
-                    <div className="whitespace-pre-wrap">{message.content}</div>
+                    {message.role === 'assistant' ? (
+                      <ReactMarkdown 
+                        remarkPlugins={[remarkGfm]}
+                        components={{
+                          p: ({ children }) => (
+                            <p className="mb-2 leading-6">
+                              {children}
+                            </p>
+                          ),
+                          strong: ({ children }) => (
+                            <strong className="font-semibold text-gray-900">
+                              {children}
+                            </strong>
+                          ),
+                          em: ({ children }) => (
+                            <em className="italic text-gray-600">
+                              {children}
+                            </em>
+                          ),
+                          ul: ({ children }) => (
+                            <ul className="mb-2 list-disc list-inside space-y-1">
+                              {children}
+                            </ul>
+                          ),
+                          li: ({ children }) => (
+                            <li className="leading-5">
+                              {children}
+                            </li>
+                          ),
+                          blockquote: ({ children }) => (
+                            <blockquote className="border-l-3 border-purple-500 pl-3 py-1 bg-gray-50 rounded-r italic text-gray-600 my-2">
+                              {children}
+                            </blockquote>
+                          ),
+                          code: ({ children }) => (
+                            <code className="bg-gray-200 text-gray-800 px-1 py-0.5 rounded text-xs font-mono">
+                              {children}
+                            </code>
+                          ),
+                        }}
+                      >
+                        {message.content}
+                      </ReactMarkdown>
+                    ) : (
+                      <div className="whitespace-pre-wrap">{message.content}</div>
+                    )}
                     <div
-                      className={`text-xs mt-1 ${
+                      className={`text-xs mt-2 ${
                         message.role === 'user' ? 'text-purple-200' : 'text-gray-500'
                       }`}
                     >
