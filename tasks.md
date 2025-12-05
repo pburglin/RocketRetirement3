@@ -1,38 +1,5 @@
 # Project Rocket Fi - Consolidated Development Tasks
 
-## 🚨 CRITICAL BUILD ERRORS
-- [ ] Fix the following build errors:
-    ```text
-
-up to date, audited 491 packages in 603ms
-
-118 packages are looking for funding
-  run `npm fund` for details
-
-2 moderate severity vulnerabilities
-
-To address all issues (including breaking changes), run:
-  npm audit fix --force
-
-Run `npm audit` for details.
-
-> rocket-fi@0.1.0 build
-> tsc && vite build
-
-src/lib/llm.ts(64,22): error TS1127: Invalid character.
-src/lib/llm.ts(64,23): error TS1134: Variable declaration expected.
-src/lib/llm.ts(105,22): error TS1005: ';' expected.
-src/lib/llm.ts(105,27): error TS1228: A type predicate is only allowed in return type position for functions and methods.
-src/lib/llm.ts(105,30): error TS1434: Unexpected keyword or identifier.
-src/lib/llm.ts(105,33): error TS1434: Unexpected keyword or identifier.
-src/lib/llm.ts(105,43): error TS1434: Unexpected keyword or identifier.
-src/lib/llm.ts(105,54): error TS1127: Invalid character.
-src/lib/llm.ts(135,17): error TS1005: ';' expected.
-src/lib/llm.ts(135,24): error TS1434: Unexpected keyword or identifier.
-src/lib/llm.ts(164,1): error TS1160: Unterminated template literal.
-    ```
-
-
 ## Phase 1: Project Setup & Core Architecture
 
 - [x] **Initialize Project**: Setup React with Vite and Tailwind CSS.
@@ -138,3 +105,12 @@ _General UI Requirements for all lists below: Sort items by highest value first,
   - [x] **Formatting**: Left-align text (fix centering issues), use proper headers/markdown rendering.
   - [x] **Insights**: Limit Pre/Post retirement insight tables to Top 5 items (collapsible "Show More").
   - [x] **Loading State**: "Crunching the numbers..." with spinner.
+
+## Phase 8: Fixing functional issues
+  - [ ] the labels in the Y axis in graphs in screens Goals and Simulations are getting cropped. Let's add a larger horizontal margin to avoid it. Make the margin dynamically larger based on the number of digits we present in the Y axis of the graph.
+  - [ ] the user's birth date is critical for all our reports. lets request user to setup the user profile before he can access the Goals, Simulations and Reports pages.
+  - [ ] in Liabilities screen, I see "Add New Liabilitie". This is incorrect, it should show "Add New Liability".
+  - [ ] add tips to help the user enter most accurate information. for example, in Investment screen "Risk Profile" field we can say "Use Low for Checking, Savings, CDs etc; Medium for S&P 500 ETF and mutual funds; High for riskier leveraged investment instruments like TQQQ"
+  - [ ] to help user enter comprehensive financial profile, lets include clickable examples for each category like Investments, Income, Expenses etc. for example, in Investments screen, when user clicks "Add New Investment Account", we can show top 5 most common options user still did not enter, including "Checking", "Savings", "Brokerage", "401K", "IRA" etc. same thing for the other categories. for example, in Expenses we can include "Car Insurance", "Health Insurance", "Groceries", "Utilities" etc.
+  - [ ] lets include a selection for each category so user can classify each item as "Pre-Retirement", "Post-Retirement" or "Pre and Pos-Retirement".
+  - [ ] lets include a free form field "Details" for each category so user can include special remarks for each item.
