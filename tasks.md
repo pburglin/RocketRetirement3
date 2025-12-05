@@ -1,39 +1,5 @@
 # Project Rocket Fi - Consolidated Development Tasks
 
-## 🚨 CRITICAL BUILD ERRORS
-- [ ] Fix the following build errors:
-    ```text
-
-up to date, audited 491 packages in 559ms
-
-118 packages are looking for funding
-  run `npm fund` for details
-
-2 moderate severity vulnerabilities
-
-To address all issues (including breaking changes), run:
-  npm audit fix --force
-
-Run `npm audit` for details.
-
-> rocket-fi@0.1.0 build
-> tsc && vite build
-
-src/pages/LiabilitiesPage.tsx(169,2): error TS17008: JSX element 'form' has no corresponding closing tag.
-src/pages/LiabilitiesPage.tsx(182,2): error TS17008: JSX element 'div' has no corresponding closing tag.
-src/pages/LiabilitiesPage.tsx(202,2): error TS17008: JSX element 'div' has no corresponding closing tag.
-src/pages/LiabilitiesPage.tsx(206,2): error TS17008: JSX element 'div' has no corresponding closing tag.
-src/pages/LiabilitiesPage.tsx(207,2): error TS17008: JSX element 'div' has no corresponding closing tag.
-src/pages/LiabilitiesPage.tsx(208,2): error TS17008: JSX element 'span' has no corresponding closing tag.
-src/pages/LiabilitiesPage.tsx(238,2): error TS17008: JSX element 'select' has no corresponding closing tag.
-src/pages/LiabilitiesPage.tsx(265,1): error TS1109: Expression expected.
-src/pages/LiabilitiesPage.tsx(265,4): error TS1005: ')' expected.
-src/pages/LiabilitiesPage.tsx(272,2): error TS1381: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
-src/pages/LiabilitiesPage.tsx(282,1): error TS1381: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
-src/pages/LiabilitiesPage.tsx(284,1): error TS1005: '</' expected.
-    ```
-
-
 ## Phase 1: Project Setup & Core Architecture
 
 - [x] **Initialize Project**: Setup React with Vite and Tailwind CSS.
@@ -151,6 +117,7 @@ _General UI Requirements for all lists below: Sort items by highest value first,
 - [x] lets include a free form field "Details" for each category so user can include special remarks for each item.
 - [x] lets include a monthly contribution field in Investments items. User can indicate how much per month in average he contributes to each investment, like monthly IRA or 401K contributions (total, including company match etc).
 - [ ] lets add an asterisk in "Monthly Contribution", noting that contributions only apply until pre-retirement date. adjust calculations accordingly.
-- [ ] in Financial Dashboard screen, lets reorder categories as: Income Sources, Investments, Assets, Expenses and Liabilities.
-- [ ] Liability form should have required fields for Name and Balance, and optional fields for everything else. this will allow user to enter future liabilities like "Child's Wedding" etc.
-- [ ] in Financial Dashboard screen, add a Financial Snapshot section with cards for: Total Assets, Total Liabilities, Net Worth. add a Monthly Cash Flow section with cards for: Total Monthly Income, Total Monthly Expenses, Monthly Surplus/Deficit.
+- [x] in Financial Dashboard screen, lets reorder categories as: Income Sources, Investments, Assets, Expenses and Liabilities.
+- [x] Liability form should have required fields for Name and Balance, and optional fields for everything else. this will allow user to enter future liabilities like "Child's Wedding" etc.
+- [x] in Financial Dashboard screen, add a Financial Snapshot section with cards for: Total Assets, Total Liabilities, Net Worth. add a Monthly Cash Flow section with cards for: Total Monthly Income, Total Monthly Expenses, Monthly Surplus/Deficit.
+- [ ] in Simulations screen, add verbiage and insights to help user understand the simulation results

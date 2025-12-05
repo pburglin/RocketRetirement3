@@ -187,7 +187,6 @@ Balance <span className="text-red-500">*</span>
 <div className="relative mt-1 rounded-md shadow-sm">
 <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
 <span className="text-gray-500 sm:text-sm">$</span>
-
 </div>
 <input
 type="number"
@@ -205,8 +204,8 @@ Monthly Payment (Optional)
 </label>
 <div className="relative mt-1 rounded-md shadow-sm">
 <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-<span className="text-gray-500 sm:text-sm">$&lt;/span&gt;
-&lt;/div&gt;
+<span className="text-gray-500 sm:text-sm">$</span>
+</div>
 <input
 type="number"
 min="0"
@@ -214,14 +213,14 @@ value={monthlyPayment}
 onChange={(e) => setMonthlyPayment(e.target.value)}
 className="block w-full rounded-md border-gray-300 pl-7 focus:border-blue-500 focus:ring-blue-500 border p-2"
 />
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;div className=&quot;grid grid-cols-1 md:grid-cols-2 gap-4&quot;&gt;
-&lt;div&gt;
-&lt;label className=&quot;block text-sm font-medium text-gray-700&quot;&gt;
+</div>
+</div>
+</div>
+<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+<div>
+<label className="block text-sm font-medium text-gray-700">
 Interest Rate (APR %) (Optional)
-&lt;/label&gt;
+</label>
 <input
 type="number"
 min="0"
@@ -230,28 +229,28 @@ value={interestRate}
 onChange={(e) => setInterestRate(e.target.value)}
 className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 border p-2"
 />
-&lt;/div&gt;
-&lt;div&gt;
-&lt;label className=&quot;block text-sm font-medium text-gray-700&quot;&gt;
+</div>
+<div>
+<label className="block text-sm font-medium text-gray-700">
 Timeframe (Optional)
-&lt;/label&gt;
+</label>
 <select
 value={timeframe}
 onChange={(e) => setTimeframe(e.target.value as any)}
 className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 border p-2 bg-white"
 >
-&lt;option value=&quot;Pre and Post-Retirement&quot;&gt;
+<option value="Pre and Post-Retirement">
 Pre and Post-Retirement
-&lt;/option&gt;
-&lt;option value=&quot;Pre-Retirement&quot;&gt;Pre-Retirement&lt;/option&gt;
-&lt;option value=&quot;Post-Retirement&quot;&gt;Post-Retirement&lt;/option&gt;
-&lt;/select&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;div&gt;
-&lt;label className=&quot;block text-sm font-medium text-gray-700&quot;&gt;
+</option>
+<option value="Pre-Retirement">Pre-Retirement</option>
+<option value="Post-Retirement">Post-Retirement</option>
+</select>
+</div>
+</div>
+<div>
+<label className="block text-sm font-medium text-gray-700">
 Details (Optional)
-&lt;/label&gt;
+</label>
 <textarea
 rows={3}
 value={details}
@@ -259,25 +258,24 @@ onChange={(e) => setDetails(e.target.value)}
 className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 border p-2"
 placeholder="Additional notes (e.g. Estimated date of payoff)..."
 />
-&lt;/div&gt;
-&lt;div className=&quot;flex justify-end gap-2 pt-2&quot;&gt;
+</div>
+<div className="flex justify-end gap-2 pt-2">
 {onCancel && (
-&lt;button
-type=&quot;button&quot;
+<button
+type="button"
 onClick={onCancel}
-className=&quot;px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50&quot;
-&gt;
+className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50"
+>
 Cancel
-&lt;/button&gt;
+</button>
 )}
-&lt;button
-type=&quot;submit&quot;
-className=&quot;px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700&quot;
-&gt;
+<button
+type="submit"
+className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700"
+>
 Save
-&lt;/button&gt;
-&lt;/div&gt;
-&lt;/form&gt;
+</button>
+</div>
+</form>
 );
 };
-
