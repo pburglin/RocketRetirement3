@@ -1,0 +1,7 @@
+llm_prompt.txt
+llm_response.txt
+.llm_temp
+node_modules
+dist
+dist-ssr
+*.local
