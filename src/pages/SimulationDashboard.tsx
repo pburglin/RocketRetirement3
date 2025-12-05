@@ -10,7 +10,15 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
-import { RefreshCw, Play, Activity } from "lucide-react";
+import {
+  RefreshCw,
+  Play,
+  Activity,
+  Info,
+  TrendingUp,
+  AlertTriangle,
+  CheckCircle,
+} from "lucide-react";
 
 export const SimulationDashboard: React.FC = () => {
   const { user } = useAuth();
@@ -27,6 +35,7 @@ export const SimulationDashboard: React.FC = () => {
     sharpeRatio: number;
     maxDrawdown: number;
     standardDeviation: number;
+    successRate: number;
   } | null>(null);
 
   // Base assumptions (grab from user or defaults)
@@ -44,29 +53,15 @@ export const SimulationDashboard: React.FC = () => {
       const annualReturns: number[] = [];
 
       for (let i = 0; i < iterations; i++) {
-        // Simplified Monte Carlo logic with updated calculation logic in mind,
-        // but here we focus on the investment randomization part.
-        // We replicate the logic from `runProjection` roughly but with random returns.
-
         const run: SimulationResult[] = [];
         let age = currentAge;
         let invest =
           user.investmentAccounts?.reduce((sum, a) => sum + a.balance, 0) || 0;
 
-        // Calculate Surplus (simplified for MC view)
         const income =
           user.incomeSources?.reduce((s, i) => s + i.amount, 0) || 0;
         const expenses = user.expenses?.reduce((s, e) => s + e.amount, 0) || 0;
-        // Investment contributions are handled as transfers usually, but if user entered them as separate from surplus
-        // we need to add them. The `runProjection` does this. Here we approximate.
-
-        // In `runProjection`, specific contributions are DEDUCTED from surplus if we assume surplus = Income - Expenses.
-        // If user is diligent, Expenses don't include Savings.
-        // So Surplus = Income - Expenses.
-        // Of that surplus, `specificContribs` goes to specific accounts.
-        // The REST goes to general.
-        // So Total Annual Addition to Investments = Surplus * 12.
-        const totalMonthlySurplus = income - expenses; // Includes specific contributions implicitly if not expense
+        const totalMonthlySurplus = income - expenses;
         let annualAddition = totalMonthlySurplus * 12;
 
         const spending = 60000; // Hardcoded baseline for now
@@ -80,9 +75,6 @@ export const SimulationDashboard: React.FC = () => {
           isRetured: false,
         });
 
-        let peakValue = invest;
-        let maxDrawdownRun = 0;
-
         while (age < lifeExpectancy) {
           age++;
           // Random Return
@@ -92,9 +84,6 @@ export const SimulationDashboard: React.FC = () => {
             Math.sqrt(-2.0 * Math.log(u1)) * Math.cos(2.0 * Math.PI * u2);
           const annualReturn = meanReturn / 100 + z * (volatility / 100);
 
-          // Track annual returns for Sharpe (only from first run or aggregate?)
-          // Sharpe is typically calculated on the asset returns, not the portfolio value change (which includes deposits).
-          // We'll track the `annualReturn` generated here.
           if (i === 0) annualReturns.push(annualReturn);
 
           // Apply return
@@ -111,10 +100,8 @@ export const SimulationDashboard: React.FC = () => {
             invest -= inflatedSpending;
           }
 
-          // Drawdown calc
-          if (invest > peakValue) peakValue = invest;
-          const drawdown = (peakValue - invest) / peakValue;
-          if (drawdown > maxDrawdownRun) maxDrawdownRun = drawdown;
+          // Stop at zero for simpler graph viz (bankruptcy)
+          if (invest < 0) invest = 0;
 
           run.push({
             age,
@@ -130,21 +117,21 @@ export const SimulationDashboard: React.FC = () => {
       setSimulations(newSims);
 
       // Calculate Metrics
-      // Sharpe Ratio = (Mean Return - Risk Free) / StdDev of Returns
-      // We simulated returns based on Mean/Vol inputs, so the Sharpe is roughly (Mean - 0) / Vol
-      // But let's calculate based on the actual random numbers generated for the first run to be "empirical" to the sim.
-      const riskFreeRate = 0.04; // 4% assumption
-
-      // Max Drawdown (average of all runs or worst case?) -> Let's show Worst Case of first run for example
-      // Or we can calculate Max Drawdown of the *average* path?
-      // Let's just use the theoretical inputs for Sharpe to be clean:
+      const riskFreeRate = 0.04;
       const theoreticalSharpe =
         (meanReturn / 100 - riskFreeRate) / (volatility / 100);
 
+      // Success Rate: How many runs ended with > 0 money?
+      const successfulRuns = newSims.filter(
+        (run) => run[run.length - 1].investments > 0,
+      ).length;
+      const successRate = (successfulRuns / iterations) * 100;
+
       setRiskMetrics({
         sharpeRatio: theoreticalSharpe,
-        maxDrawdown: 0, // Placeholder, would need complex aggregation
+        maxDrawdown: 0, // Placeholder
         standardDeviation: volatility,
+        successRate,
       });
 
       setIsRunning(false);
@@ -152,7 +139,7 @@ export const SimulationDashboard: React.FC = () => {
   };
 
   const leftMargin = useMemo(() => {
-    if (simulations.length === 0) return 20; // Default
+    if (simulations.length === 0) return 20;
     let globalMax = 0;
     for (const run of simulations) {
       for (const point of run) {
@@ -166,54 +153,63 @@ export const SimulationDashboard: React.FC = () => {
 
   return (
     <div className="max-w-7xl mx-auto p-6 space-y-8">
-      <h1 className="text-3xl font-bold text-gray-900">
-        Monte Carlo Simulation
-      </h1>
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+        <div>
+          <h1 className="text-3xl font-bold text-gray-900">
+            Monte Carlo Simulation
+          </h1>
+          <p className="text-gray-500 mt-1">
+            Stress-test your retirement plan against market volatility.
+          </p>
+        </div>
+      </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+        {/* Main Chart Area */}
         <div className="lg:col-span-3 bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-          <div className="flex flex-wrap gap-6 items-end mb-6">
+          {/* Controls */}
+          <div className="flex flex-wrap gap-6 items-end mb-6 p-4 bg-gray-50 rounded-lg border border-gray-100">
             <div>
-              <label className="block text-sm font-medium text-gray-700">
-                Iterations
+              <label className="block text-xs font-medium text-gray-500 mb-1 uppercase tracking-wider">
+                Scenarios
               </label>
               <select
                 value={iterations}
                 onChange={(e) => setIterations(Number(e.target.value))}
-                className="mt-1 block w-32 rounded-md border-gray-300 border p-2"
+                className="block w-32 rounded-md border-gray-300 border p-2 text-sm bg-white"
               >
                 <option value="10">10 (Fast)</option>
-                <option value="50">50</option>
-                <option value="100">100</option>
-                <option value="500">500 (Slow)</option>
+                <option value="50">50 (Standard)</option>
+                <option value="100">100 (Detailed)</option>
+                <option value="500">500 (Precise)</option>
               </select>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700">
-                Mean Return (%)
+              <label className="block text-xs font-medium text-gray-500 mb-1 uppercase tracking-wider">
+                Exp. Return (%)
               </label>
               <input
                 type="number"
                 value={meanReturn}
                 onChange={(e) => setMeanReturn(Number(e.target.value))}
-                className="mt-1 block w-32 rounded-md border-gray-300 border p-2"
+                className="block w-24 rounded-md border-gray-300 border p-2 text-sm"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700">
-                Volatility (+/- %)
+              <label className="block text-xs font-medium text-gray-500 mb-1 uppercase tracking-wider">
+                Volatility (%)
               </label>
               <input
                 type="number"
                 value={volatility}
                 onChange={(e) => setVolatility(Number(e.target.value))}
-                className="mt-1 block w-32 rounded-md border-gray-300 border p-2"
+                className="block w-24 rounded-md border-gray-300 border p-2 text-sm"
               />
             </div>
             <button
               onClick={handleRun}
               disabled={isRunning}
-              className="flex items-center gap-2 px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50"
+              className="flex items-center gap-2 px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50 transition-colors shadow-sm"
             >
               {isRunning ? (
                 <RefreshCw className="animate-spin h-4 w-4" />
@@ -224,87 +220,181 @@ export const SimulationDashboard: React.FC = () => {
             </button>
           </div>
 
-          <div className="h-[500px] w-full">
+          <div className="h-[500px] w-full relative">
             {simulations.length > 0 ? (
-              <ResponsiveContainer width="100%" height="100%">
-                <LineChart
-                  margin={{ top: 5, right: 30, left: leftMargin, bottom: 5 }}
-                >
-                  <CartesianGrid strokeDasharray="3 3" opacity={0.3} />
-                  <XAxis
-                    dataKey="age"
-                    type="number"
-                    domain={["dataMin", "dataMax"]}
-                    label={{ value: "Age", position: "insideBottomRight" }}
-                    allowDuplicatedCategory={false}
-                  />
-                  <YAxis tickFormatter={(value) => `$${value / 1000}k`} />
-                  <Tooltip
-                    labelFormatter={(v) => `Age ${v}`}
-                    formatter={(v: number) => [
-                      `$${Math.round(v).toLocaleString()}`,
-                      "Portfolio",
-                    ]}
-                  />
-                  {simulations.map((s, i) => (
-                    <Line
-                      key={i}
-                      data={s}
-                      type="monotone"
-                      dataKey="investments"
-                      stroke="#8884d8"
-                      strokeWidth={1}
-                      dot={false}
-                      opacity={0.3}
+              <>
+                <ResponsiveContainer width="100%" height="100%">
+                  <LineChart
+                    margin={{ top: 5, right: 30, left: leftMargin, bottom: 5 }}
+                  >
+                    <CartesianGrid strokeDasharray="3 3" opacity={0.3} />
+                    <XAxis
+                      dataKey="age"
+                      type="number"
+                      domain={["dataMin", "dataMax"]}
+                      label={{ value: "Age", position: "insideBottomRight" }}
+                      allowDuplicatedCategory={false}
                     />
-                  ))}
-                </LineChart>
-              </ResponsiveContainer>
+                    <YAxis tickFormatter={(value) => `$${value / 1000}k`} />
+                    <Tooltip
+                      labelFormatter={(v) => `Age ${v}`}
+                      formatter={(v: number) => [
+                        `$${Math.round(v).toLocaleString()}`,
+                        "Portfolio",
+                      ]}
+                    />
+                    {simulations.map((s, i) => (
+                      <Line
+                        key={i}
+                        data={s}
+                        type="monotone"
+                        dataKey="investments"
+                        stroke={
+                          s[s.length - 1].investments <= 0
+                            ? "#ef4444"
+                            : "#8884d8"
+                        }
+                        strokeWidth={1}
+                        dot={false}
+                        opacity={0.4}
+                      />
+                    ))}
+                  </LineChart>
+                </ResponsiveContainer>
+                <div className="absolute top-4 right-4 bg-white/80 backdrop-blur-sm p-2 rounded text-xs text-gray-500 shadow-sm border border-gray-100">
+                  <div className="flex items-center gap-2 mb-1">
+                    <span className="w-3 h-3 rounded-full bg-[#8884d8]"></span>
+                    <span>Successful Scenarios</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="w-3 h-3 rounded-full bg-red-500"></span>
+                    <span>Depleted Scenarios</span>
+                  </div>
+                </div>
+              </>
             ) : (
-              <div className="h-full flex items-center justify-center bg-gray-50 rounded border border-dashed border-gray-300">
-                <p className="text-gray-500">
-                  Press "Run Simulation" to see possible futures.
+              <div className="h-full flex flex-col items-center justify-center bg-gray-50 rounded border border-dashed border-gray-300">
+                <Activity className="w-12 h-12 text-gray-300 mb-4" />
+                <p className="text-gray-600 font-medium">Ready to Simulate</p>
+                <p className="text-sm text-gray-400 mt-1 max-w-sm text-center">
+                  Click "Run Simulation" to generate {iterations} possible
+                  future market scenarios based on your parameters.
                 </p>
               </div>
             )}
           </div>
         </div>
 
-        {/* Risk Metrics Panel */}
+        {/* Sidebar: Metrics & Explanations */}
         <div className="lg:col-span-1 space-y-6">
+          {/* Results Panel */}
           <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
             <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
-              <Activity className="w-5 h-5 text-purple-600" />
-              Risk Metrics
+              <TrendingUp className="w-5 h-5 text-purple-600" />
+              Results
             </h3>
             {riskMetrics ? (
-              <div className="space-y-4">
+              <div className="space-y-6">
                 <div>
-                  <p className="text-sm text-gray-500">Sharpe Ratio</p>
-                  <p className="text-2xl font-bold text-gray-900">
+                  <p className="text-sm font-medium text-gray-500 mb-1">
+                    Success Rate
+                  </p>
+                  <div className="flex items-baseline gap-2">
+                    <span
+                      className={`text-3xl font-bold ${
+                        riskMetrics.successRate >= 80
+                          ? "text-green-600"
+                          : riskMetrics.successRate >= 50
+                            ? "text-yellow-600"
+                            : "text-red-600"
+                      }`}
+                    >
+                      {riskMetrics.successRate.toFixed(0)}%
+                    </span>
+                    <span className="text-xs text-gray-400">
+                      chance of success
+                    </span>
+                  </div>
+                  <p className="text-xs text-gray-500 mt-2">
+                    {riskMetrics.successRate >= 90 ? (
+                      <span className="flex items-center gap-1 text-green-700">
+                        <CheckCircle className="w-3 h-3" /> Excellent stability
+                      </span>
+                    ) : riskMetrics.successRate < 50 ? (
+                      <span className="flex items-center gap-1 text-red-700">
+                        <AlertTriangle className="w-3 h-3" /> High risk of
+                        depletion
+                      </span>
+                    ) : (
+                      "Moderate risk profile"
+                    )}
+                  </p>
+                </div>
+
+                <div className="pt-4 border-t border-gray-100">
+                  <div className="flex justify-between items-center mb-1">
+                    <p className="text-sm font-medium text-gray-500">
+                      Sharpe Ratio
+                    </p>
+                    <div
+                      className="group relative cursor-help"
+                      title="Measure of risk-adjusted return. Higher is better."
+                    >
+                      <Info className="w-3 h-3 text-gray-400" />
+                    </div>
+                  </div>
+                  <p className="text-xl font-bold text-gray-900">
                     {riskMetrics.sharpeRatio.toFixed(2)}
                   </p>
-                  <p className="text-xs text-gray-400">
-                    (Mean Return - 4%) / Volatility
-                  </p>
                 </div>
+
                 <div className="pt-4 border-t border-gray-100">
-                  <p className="text-sm text-gray-500">Implied Volatility</p>
-                  <p className="text-2xl font-bold text-gray-900">
-                    {riskMetrics.standardDeviation}%
+                  <p className="text-sm font-medium text-gray-500 mb-1">
+                    What this means
                   </p>
-                </div>
-                <div className="pt-4 border-t border-gray-100">
-                  <p className="text-xs text-gray-400 italic">
-                    Based on input parameters.
+                  <p className="text-xs text-gray-600 leading-relaxed">
+                    Based on {iterations} simulations, your portfolio survived
+                    until age {lifeExpectancy} in {riskMetrics.successRate}% of
+                    scenarios.
                   </p>
                 </div>
               </div>
             ) : (
-              <p className="text-sm text-gray-500 italic">
-                Run simulation to see metrics.
-              </p>
+              <div className="text-center py-8 text-gray-400 text-sm italic">
+                Run the simulation to see your success probability and risk
+                metrics.
+              </div>
             )}
+          </div>
+
+          {/* Educational Panel */}
+          <div className="bg-blue-50 p-6 rounded-lg border border-blue-100">
+            <h3 className="text-sm font-bold text-blue-900 mb-3 flex items-center gap-2">
+              <Info className="w-4 h-4" /> Understanding the Graph
+            </h3>
+            <ul className="space-y-3 text-xs text-blue-800">
+              <li className="flex gap-2">
+                <span className="font-bold">•</span>
+                <span>
+                  Each <strong>line</strong> represents one possible future
+                  market outcome.
+                </span>
+              </li>
+              <li className="flex gap-2">
+                <span className="font-bold">•</span>
+                <span>
+                  <strong>Red lines</strong> indicate scenarios where you ran
+                  out of money before age {lifeExpectancy}.
+                </span>
+              </li>
+              <li className="flex gap-2">
+                <span className="font-bold">•</span>
+                <span>
+                  <strong>Volatility</strong> controls how "bouncy" the lines
+                  are. Higher volatility means wider spread of outcomes.
+                </span>
+              </li>
+            </ul>
           </div>
         </div>
       </div>
