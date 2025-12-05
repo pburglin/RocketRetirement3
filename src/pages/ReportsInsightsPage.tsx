@@ -5,8 +5,10 @@ import {
   fetchLLMAnalysis,
   LLMResponse,
   constructPrompt,
+  fetchAvailableModels,
   FREE_MODELS,
 } from "../lib/llm";
+import AIAssistant from "../components/AIAssistant";
 import {
   Brain,
   FileText,
@@ -16,26 +18,67 @@ import {
   Loader2,
   RefreshCw,
   Printer,
+  HelpCircle,
+  Users,
+  MessageCircle,
+  Plus,
+  X,
 } from "lucide-react";
 
 export const ReportsInsightsPage: React.FC = () => {
   const { user } = useAuth();
   const [selectedModel, setSelectedModel] = useState(FREE_MODELS[0]);
+  const [availableModels, setAvailableModels] = useState<string[]>(FREE_MODELS);
   const [loading, setLoading] = useState(false);
+  const [loadingModels, setLoadingModels] = useState(true);
   const [report, setReport] = useState<LLMResponse | null>(null);
+  const [reportHistory, setReportHistory] = useState<LLMResponse[]>([]);
   const [showPrompt, setShowPrompt] = useState(false);
+  const [expandedReport, setExpandedReport] = useState<string | null>(null);
+  const [showBeneficiaryAssistant, setShowBeneficiaryAssistant] = useState(false);
+  const [showChatAssistant, setShowChatAssistant] = useState(false);
   const [error, setError] = useState("");
 
-  // Load persisted report on mount
+  // Load persisted report and available models on mount
   useEffect(() => {
-    const saved = localStorage.getItem("rocketfi_last_report");
-    if (saved) {
-      try {
-        setReport(JSON.parse(saved));
-      } catch (e) {
-        console.error("Failed to load saved report", e);
+    const loadData = async () => {
+      // Load saved report and history
+      const saved = localStorage.getItem("rocketfi_last_report");
+      const savedHistory = localStorage.getItem("rocketfi_report_history");
+      
+      if (saved) {
+        try {
+          const currentReport = JSON.parse(saved);
+          setReport(currentReport);
+        } catch (e) {
+          console.error("Failed to load saved report", e);
+        }
       }
-    }
+
+      if (savedHistory) {
+        try {
+          const history = JSON.parse(savedHistory);
+          setReportHistory(Array.isArray(history) ? history : []);
+        } catch (e) {
+          console.error("Failed to load report history", e);
+        }
+      }
+
+      // Load available models
+      try {
+        const models = await fetchAvailableModels();
+        setAvailableModels(models);
+        // Set default to first available model
+        setSelectedModel(models[0]);
+      } catch (e) {
+        console.error("Failed to load available models", e);
+        // Keep default models
+      } finally {
+        setLoadingModels(false);
+      }
+    };
+
+    loadData();
   }, []);
 
   const handleGenerate = async () => {
@@ -45,8 +88,18 @@ export const ReportsInsightsPage: React.FC = () => {
 
     try {
       const response = await fetchLLMAnalysis(user, selectedModel);
+      
+      // Update current report
       setReport(response);
       localStorage.setItem("rocketfi_last_report", JSON.stringify(response));
+      
+      // Update history
+      const newHistory = [response, ...reportHistory.filter(r => r.created !== response.created)].slice(0, 10); // Keep last 10 reports
+      setReportHistory(newHistory);
+      localStorage.setItem("rocketfi_report_history", JSON.stringify(newHistory));
+      
+      // Expand the new report by default
+      setExpandedReport(response.created.toString());
     } catch (e) {
       setError((e as Error).message);
     } finally {
@@ -81,20 +134,34 @@ export const ReportsInsightsPage: React.FC = () => {
 
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  AI Model
-                </label>
-                <select
-                  value={selectedModel}
-                  onChange={(e) => setSelectedModel(e.target.value)}
-                  className="w-full rounded-md border-gray-300 shadow-sm focus:border-purple-500 focus:ring-purple-500 border p-2 text-sm"
-                >
-                  {FREE_MODELS.map((m) => (
-                    <option key={m} value={m}>
-                      {m}
-                    </option>
-                  ))}
-                </select>
+                <div className="flex items-center gap-2 mb-1">
+                  <label className="block text-sm font-medium text-gray-700">
+                    AI Model
+                  </label>
+                  <div className="group relative">
+                    <HelpCircle className="w-4 h-4 text-gray-400 hover:text-gray-600 cursor-help" />
+                    <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 bg-gray-900 text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none z-10 whitespace-nowrap">
+                      Try different models to get diverse financial perspectives and "second opinions"
+                    </div>
+                  </div>
+                </div>
+                {loadingModels ? (
+                  <div className="w-full rounded-md border-gray-300 shadow-sm border p-2 text-sm text-gray-500">
+                    Loading available models...
+                  </div>
+                ) : (
+                  <select
+                    value={selectedModel}
+                    onChange={(e) => setSelectedModel(e.target.value)}
+                    className="w-full rounded-md border-gray-300 shadow-sm focus:border-purple-500 focus:ring-purple-500 border p-2 text-sm"
+                  >
+                    {availableModels.map((m) => (
+                      <option key={m} value={m}>
+                        {m}
+                      </option>
+                    ))}
+                  </select>
+                )}
               </div>
 
               <div className="bg-blue-50 p-3 rounded-md text-xs text-blue-800">
@@ -103,7 +170,9 @@ export const ReportsInsightsPage: React.FC = () => {
                   <span>
                     <strong>Privacy Note:</strong> Clicking "Start AI Analysis"
                     will send anonymized financial aggregates to OpenRouter.ai.
-                    No name or exact street address is sent.
+                    No name or exact street address is sent. You can expand the
+                    AI Prompt section below to see exactly what data is being
+                    shared with the model before generation.
                   </span>
                 </p>
               </div>
@@ -155,14 +224,15 @@ export const ReportsInsightsPage: React.FC = () => {
         </div>
 
         {/* Report Content */}
-        <div className="lg:col-span-3">
+        <div className="lg:col-span-3 space-y-6">
+          {/* Current Report - Always Expanded */}
           {report ? (
             <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
               <div className="p-6 border-b border-gray-100 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-gray-50">
                 <div className="flex items-center gap-2">
                   <FileText className="text-purple-600" />
                   <h2 className="text-lg font-semibold text-gray-900">
-                    Personalized Recommendations
+                    Latest Report
                   </h2>
                 </div>
                 <div className="flex items-center gap-4 no-print">
@@ -208,6 +278,135 @@ export const ReportsInsightsPage: React.FC = () => {
               </p>
             </div>
           )}
+
+          {/* Report History - Accordion Style */}
+          {reportHistory.length > 0 && (
+            <div className="bg-white rounded-lg shadow-sm border border-gray-200">
+              <div className="p-4 border-b border-gray-100 bg-gray-50">
+                <h3 className="text-lg font-semibold text-gray-900">Previous Reports</h3>
+                <p className="text-sm text-gray-500 mt-1">
+                  {reportHistory.length} previous report{reportHistory.length !== 1 ? 's' : ''}
+                </p>
+              </div>
+              <div className="divide-y divide-gray-100">
+                {reportHistory.map((historyReport, index) => {
+                  const isExpanded = expandedReport === historyReport.created.toString();
+                  return (
+                    <div key={historyReport.created}>
+                      <button
+                        onClick={() => setExpandedReport(
+                          isExpanded ? null : historyReport.created.toString()
+                        )}
+                        className="w-full p-4 text-left hover:bg-gray-50 transition-colors"
+                      >
+                        <div className="flex items-center justify-between">
+                          <div className="flex-1">
+                            <div className="flex items-center gap-3">
+                              <span className="text-sm font-medium text-gray-900">
+                                {index + 1}.
+                              </span>
+                              <span className="text-xs text-gray-500">
+                                {historyReport.model}
+                              </span>
+                              <span className="text-xs text-gray-400">
+                                {new Date(historyReport.created).toLocaleString()}
+                              </span>
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <span className="text-xs text-gray-400">
+                              {historyReport.usage?.total_tokens || 0} tokens
+                            </span>
+                            {isExpanded ? (
+                              <ChevronUp className="w-4 h-4 text-gray-400" />
+                            ) : (
+                              <ChevronDown className="w-4 h-4 text-gray-400" />
+                            )}
+                          </div>
+                        </div>
+                      </button>
+                      
+                      {isExpanded && (
+                        <div className="px-4 pb-4">
+                          <div className="bg-gray-50 p-4 rounded-lg">
+                            <div className="prose prose-purple max-w-none text-sm text-gray-700">
+                              <ReactMarkdown>{historyReport.content}</ReactMarkdown>
+                            </div>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
+          {/* AI Assistants Section */}
+          <div className="space-y-6">
+            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">Additional AI Tools</h3>
+              <p className="text-sm text-gray-600 mb-6">
+                Access specialized AI assistants for estate planning and general financial guidance.
+              </p>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {/* Beneficiary Audit Assistant */}
+                <div className="border border-gray-200 rounded-lg p-4">
+                  <div className="flex items-center gap-3 mb-3">
+                    <div className="p-2 bg-blue-100 rounded-lg">
+                      <Users className="w-5 h-5 text-blue-600" />
+                    </div>
+                    <div>
+                      <h4 className="font-medium text-gray-900">Beneficiary Audit</h4>
+                      <p className="text-sm text-gray-600">Estate planning & beneficiary review</p>
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => setShowBeneficiaryAssistant(!showBeneficiaryAssistant)}
+                    className="w-full bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors flex items-center justify-center gap-2"
+                  >
+                    {showBeneficiaryAssistant ? <X className="w-4 h-4" /> : <Plus className="w-4 h-4" />}
+                    {showBeneficiaryAssistant ? 'Hide' : 'Generate'} Beneficiary Audit
+                  </button>
+                </div>
+
+                {/* Ask the Planner Chat */}
+                <div className="border border-gray-200 rounded-lg p-4">
+                  <div className="flex items-center gap-3 mb-3">
+                    <div className="p-2 bg-green-100 rounded-lg">
+                      <MessageCircle className="w-5 h-5 text-green-600" />
+                    </div>
+                    <div>
+                      <h4 className="font-medium text-gray-900">Ask the Planner</h4>
+                      <p className="text-sm text-gray-600">Free-form financial questions</p>
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => setShowChatAssistant(!showChatAssistant)}
+                    className="w-full bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 transition-colors flex items-center justify-center gap-2"
+                  >
+                    {showChatAssistant ? <X className="w-4 h-4" /> : <Plus className="w-4 h-4" />}
+                    {showChatAssistant ? 'Hide' : 'Start'} Chat
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {/* AI Assistant Components */}
+            {showBeneficiaryAssistant && (
+              <AIAssistant
+                mode="beneficiary"
+                onClose={() => setShowBeneficiaryAssistant(false)}
+              />
+            )}
+
+            {showChatAssistant && (
+              <AIAssistant
+                mode="chat"
+                onClose={() => setShowChatAssistant(false)}
+              />
+            )}
+          </div>
         </div>
       </div>
     </div>
