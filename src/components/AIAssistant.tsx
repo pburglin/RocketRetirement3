@@ -80,8 +80,8 @@ export const AIAssistant: React.FC<AIAssistantProps> = ({ mode, onClose }) => {
 
   const getModeDescription = () => {
     return mode === 'beneficiary' 
-      ? 'Generate a comprehensive beneficiary audit for your estate planning.'
-      : 'Ask any financial planning questions based on your financial context.';
+      ? 'Review and optimize your beneficiary designations, identify potential issues, and get recommendations for improving your estate plan'
+      : 'Ask any financial question and get personalized advice from our AI financial planner. Get guidance on investments, retirement planning, tax strategies, and more.';
   };
 
   return (
