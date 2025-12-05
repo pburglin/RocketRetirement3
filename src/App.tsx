@@ -1,6 +1,12 @@
 import React from "react";
 import { AuthProvider } from "./context/AuthContext";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import {
+  BrowserRouter,
+  Routes,
+  Route,
+  Navigate,
+  useLocation,
+} from "react-router-dom";
 import { Header } from "./components/Header";
 import { LandingPage } from "./pages/LandingPage";
 import { PrivacyPolicyPage } from "./pages/PrivacyPolicyPage";
@@ -30,6 +36,35 @@ const ProtectedRoute: React.FC<{ children: React.ReactElement }> = ({
   return children;
 };
 
+// Profile Completion Guard
+// Ensures crucial data (like DOB) is present before accessing advanced features
+const RequireProfile: React.FC<{ children: React.ReactElement }> = ({
+  children,
+}) => {
+  const { user } = useAuth();
+  const location = useLocation();
+
+  if (!user) {
+    return <Navigate to="/login" replace state={{ from: location }} />;
+  }
+
+  if (!user.dob) {
+    return (
+      <Navigate
+        to="/profile"
+        replace
+        state={{
+          message:
+            "Please set your Date of Birth to access goals and simulations.",
+          type: "warning",
+        }}
+      />
+    );
+  }
+
+  return children;
+};
+
 function App() {
   return (
     <AuthProvider>
@@ -42,7 +77,7 @@ function App() {
               <Route path="/" element={<LandingPage />} />
               <Route
                 path="/how-it-works"
-                element={<Navigate to="/#how-it-works" replace />}
+                element={<Navigate to="/\#how-it-works" replace />}
               />
               <Route path="/privacy" element={<PrivacyPolicyPage />} />
               <Route path="/faq" element={<FAQPage />} />
@@ -111,12 +146,14 @@ function App() {
                 }
               />
 
-              {/* Planning & Simulation */}
+              {/* Planning & Simulation - Require Profile (DOB) */}
               <Route
                 path="/goals"
                 element={
                   <ProtectedRoute>
-                    <RetirementGoalsPage />
+                    <RequireProfile>
+                      <RetirementGoalsPage />
+                    </RequireProfile>
                   </ProtectedRoute>
                 }
               />
@@ -124,7 +161,9 @@ function App() {
                 path="/simulations"
                 element={
                   <ProtectedRoute>
-                    <SimulationDashboard />
+                    <RequireProfile>
+                      <SimulationDashboard />
+                    </RequireProfile>
                   </ProtectedRoute>
                 }
               />
@@ -132,7 +171,9 @@ function App() {
                 path="/reports"
                 element={
                   <ProtectedRoute>
-                    <ReportsInsightsPage />
+                    <RequireProfile>
+                      <ReportsInsightsPage />
+                    </RequireProfile>
                   </ProtectedRoute>
                 }
               />

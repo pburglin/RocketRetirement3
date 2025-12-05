@@ -1,4 +1,5 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
+import { useLocation } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { StorageService, UserProfile, Dependent } from "../services/storage";
 import { decryptData, encryptData } from "../utils/crypto";
@@ -71,6 +72,7 @@ const US_STATES = [
 export const UserProfilePage: React.FC = () => {
   const { user, saveData, encryptionKey, login } = useAuth();
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const location = useLocation();
 
   // Form State
   const [username, setUsername] = useState(user?.username || "");
@@ -89,6 +91,18 @@ export const UserProfilePage: React.FC = () => {
   // Feedback
   const [message, setMessage] = useState({ text: "", type: "" });
   const [showExportModal, setShowExportModal] = useState(false);
+
+  // Check for redirect messages (e.g. "Set DOB first")
+  useEffect(() => {
+    if (location.state && location.state.message) {
+      setMessage({
+        text: location.state.message,
+        type: location.state.type || "info",
+      });
+      // Clear history state to prevent message reappearing on simple reload
+      window.history.replaceState({}, document.title);
+    }
+  }, [location]);
 
   const handleSave = () => {
     // Check username change
@@ -114,11 +128,6 @@ export const UserProfilePage: React.FC = () => {
       state,
       dependents,
     });
-
-    // If username changed, we need to re-login essentially or update context
-    // The saveData updates the current user object in context, but StorageService uses the NEW username
-    // We should probably force a logout if username changes or handle it gracefully.
-    // For simplicity, if username changes, we keep logged in as the new user context is updated.
 
     setMessage({ text: "Profile updated successfully!", type: "success" });
     setTimeout(() => setMessage({ text: "", type: "" }), 3000);
@@ -221,7 +230,10 @@ export const UserProfilePage: React.FC = () => {
           setState(userProfile.state || "");
           setDependents(userProfile.dependents || []);
 
-          setMessage({ text: "Data imported successfully!", type: "success" });
+          setMessage({
+            text: "Data imported successfully!",
+            type: "success",
+          });
         }
       } catch (err) {
         console.error(err);
@@ -265,8 +277,11 @@ export const UserProfilePage: React.FC = () => {
 
       {message.text && (
         <div
-          className={`p-4 rounded-md ${message.type === "error" ? "bg-red-50 text-red-700" : "bg-green-50 text-green-700"}`}
+          className={`p-4 rounded-md ${message.type === "error" ? "bg-red-50 text-red-700" : message.type === "warning" ? "bg-yellow-50 text-yellow-800" : "bg-green-50 text-green-700"}`}
         >
+          {message.type === "warning" && (
+            <AlertTriangle className="inline-block w-5 h-5 mr-2 -mt-1" />
+          )}
           {message.text}
         </div>
       )}
@@ -295,14 +310,20 @@ export const UserProfilePage: React.FC = () => {
           {/* DOB */}
           <div>
             <label className="block text-sm font-medium text-gray-700">
-              Date of Birth
+              Date of Birth <span className="text-red-500">*</span>
             </label>
             <input
               type="date"
               value={dob}
               onChange={(e) => setDob(e.target.value)}
-              className="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+              required
+              className={`mt-1 block w-full py-2 px-3 border bg-white rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm ${!dob ? "border-red-300 ring-1 ring-red-100" : "border-gray-300"}`}
             />
+            {!dob && (
+              <p className="mt-1 text-xs text-red-500">
+                Required for calculations
+              </p>
+            )}
           </div>
 
           {/* State */}
