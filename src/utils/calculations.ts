@@ -222,3 +222,17 @@ export const runProjection = (
 
   return results;
 };
+
+export const calculateMonthlyCashFlow = (user: UserProfile) => {
+  const income = user.incomeSources?.reduce((sum, item) => sum + item.amount, 0) || 0;
+  const expenses = user.expenses?.reduce((sum, item) => sum + item.amount, 0) || 0;
+  const liabilityPayments = user.liabilities?.reduce((sum, item) => sum + (item.monthlyPayment || 0), 0) || 0;
+  const totalExpenses = expenses + liabilityPayments;
+  const surplus = income - totalExpenses;
+  
+  return {
+    income,
+    expenses: totalExpenses,
+    surplus,
+  };
+};
