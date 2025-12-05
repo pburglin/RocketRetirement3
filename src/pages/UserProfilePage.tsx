@@ -10,8 +10,8 @@ import {
   Trash2,
   Plus,
   AlertTriangle,
+  Lock,
 } from "lucide-react";
-import { useNavigate } from "react-router-dom";
 
 const US_STATES = [
   "AL",
@@ -69,8 +69,7 @@ const US_STATES = [
 ];
 
 export const UserProfilePage: React.FC = () => {
-  const { user, saveData, encryptionKey, logout, login } = useAuth();
-  const navigate = useNavigate();
+  const { user, saveData, encryptionKey, login } = useAuth();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Form State
