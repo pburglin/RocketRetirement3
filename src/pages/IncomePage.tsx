@@ -56,10 +56,10 @@ export const IncomePage: React.FC = () => {
   };
 
   const chartData = useMemo(() => {
-    // Group by category for visualization
+    // Group by income source name for visualization
     const grouped = items.reduce(
       (acc, item) => {
-        const key = item.category || "Uncategorized";
+        const key = item.name || "Unnamed";
         acc[key] = (acc[key] || 0) + item.amount;
         return acc;
       },
@@ -76,7 +76,7 @@ export const IncomePage: React.FC = () => {
       stats={
         <ModuleStats
           data={chartData}
-          type="bar"
+          type="pie"
           dataKey="value"
           nameKey="name"
           title="Income by Timeframe"

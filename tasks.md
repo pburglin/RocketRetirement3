@@ -135,6 +135,7 @@ _General UI Requirements for all lists below: Sort items by highest value first,
 - [x] **State Management**: Implement global state persistence (or Context preservation) to ensure field values are not lost when navigating between screens without saving.
 - [x] **Visual Enhancements**:
   - [x] **Contextual Stats**: Add small, collapsible statistical charts to every CRUD screen (e.g., an asset allocation pie chart on the Assets screen).
+  - [x] **Chart Consistency**: Change Income Sources screen from bar chart to pie chart to match Investments and Assets categories.
 - [x] **User Education**:
   - [x] **Definitions**: Add a clearly visible tooltip or info box distinguishing "Expenses" (recurring/lifestyle costs) vs. "Liabilities" (debts/loans with balances).
 - [x] **Bug Fixes**:
