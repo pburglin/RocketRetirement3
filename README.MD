@@ -1,5 +1,7 @@
 # Rocket Fi 🚀
 
+![RocketFi Logo](RocketFi.png)
+
 **Secure, Client-Side, AI-Powered Retirement Planning.**
 
 Rocket Fi is a modern web application designed to help users plan for financial independence and retirement without compromising their privacy. Unlike traditional financial tools, Rocket Fi operates entirely in your browser—no databases, no server-side storage of financial data, and military-grade encryption for your local files.
