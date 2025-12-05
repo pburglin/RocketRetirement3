@@ -1,7 +1,9 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useMemo } from "react";
 import { useAuth } from "../context/AuthContext";
 import { ModulePageLayout } from "../components/ModulePageLayout";
 import { Asset, Timeframe } from "../services/storage";
+import { useFormPersistence } from "../hooks/useFormPersistence";
+import { ModuleStats } from "../components/ModuleStats";
 
 const ASSET_SUGGESTIONS: Partial<Asset>[] = [
   {
@@ -54,11 +56,30 @@ export const AssetsPage: React.FC = () => {
     saveData({ assets: items.filter((i) => i.id !== id) });
   };
 
+  const chartData = useMemo(() => {
+    const sorted = [...items].sort((a, b) => b.value - a.value);
+    const top5 = sorted.slice(0, 5);
+    const other = sorted.slice(5).reduce((sum, i) => sum + i.value, 0);
+    const result = top5.map((i) => ({ name: i.name, value: i.value }));
+    if (other > 0) result.push({ name: "Other", value: other });
+    return result;
+  }, [items]);
+
   return (
     <ModulePageLayout<Asset>
       title="Assets"
       items={items}
       suggestions={ASSET_SUGGESTIONS}
+      stats={
+        <ModuleStats
+          data={chartData}
+          type="pie"
+          dataKey="value"
+          nameKey="name"
+          title="Top Assets"
+          totalLabel="Total Assets Value"
+        />
+      }
       onAdd={handleAdd}
       onEdit={handleEdit}
       onDelete={handleDelete}
@@ -105,37 +126,43 @@ const AssetForm: React.FC<{
   initialData?: Partial<Asset>;
   onCancel?: () => void;
 }> = ({ onSubmit, initialData, onCancel }) => {
-  const [name, setName] = React.useState(initialData?.name || "");
-  const [value, setValue] = React.useState(
-    initialData?.value?.toString() || "",
+  const isEditMode = !!initialData?.id;
+  const initialFormState = {
+    name: "",
+    value: "",
+    depreciationRate: "0",
+    timeframe: "Pre and Post-Retirement" as Timeframe,
+    details: "",
+  };
+
+  const [formData, setFormData, clearFormData] = useFormPersistence(
+    `asset_form_draft`,
+    initialFormState,
+    !isEditMode,
   );
-  const [depreciationRate, setDepreciationRate] = React.useState(
-    initialData?.depreciationRate?.toString() || "0",
-  );
-  const [timeframe, setTimeframe] = React.useState<Timeframe>(
-    initialData?.timeframe || "Pre and Post-Retirement",
-  );
-  const [details, setDetails] = React.useState(initialData?.details || "");
 
   useEffect(() => {
     if (initialData) {
-      setName(initialData.name || "");
-      setValue(initialData.value?.toString() || "");
-      setDepreciationRate(initialData.depreciationRate?.toString() || "0");
-      setTimeframe(initialData.timeframe || "Pre and Post-Retirement");
-      setDetails(initialData.details || "");
+      setFormData({
+        name: initialData.name || "",
+        value: initialData.value?.toString() || "",
+        depreciationRate: initialData.depreciationRate?.toString() || "0",
+        timeframe: initialData.timeframe || "Pre and Post-Retirement",
+        details: initialData.details || "",
+      });
     }
-  }, [initialData]);
+  }, [initialData, setFormData]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     onSubmit({
-      name,
-      value: parseFloat(value) || 0,
-      depreciationRate: parseFloat(depreciationRate) || 0,
-      timeframe,
-      details,
+      name: formData.name,
+      value: parseFloat(formData.value) || 0,
+      depreciationRate: parseFloat(formData.depreciationRate) || 0,
+      timeframe: formData.timeframe,
+      details: formData.details,
     });
+    if (!isEditMode) clearFormData();
   };
 
   return (
@@ -145,8 +172,8 @@ const AssetForm: React.FC<{
         <input
           type="text"
           required
-          value={name}
-          onChange={(e) => setName(e.target.value)}
+          value={formData.name}
+          onChange={(e) => setFormData({ ...formData, name: e.target.value })}
           className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 border p-2"
         />
       </div>
@@ -162,8 +189,10 @@ const AssetForm: React.FC<{
             type="number"
             required
             min="0"
-            value={value}
-            onChange={(e) => setValue(e.target.value)}
+            value={formData.value}
+            onChange={(e) =>
+              setFormData({ ...formData, value: e.target.value })
+            }
             className="block w-full rounded-md border-gray-300 pl-7 focus:border-blue-500 focus:ring-blue-500 border p-2"
           />
         </div>
@@ -177,8 +206,10 @@ const AssetForm: React.FC<{
             type="number"
             required
             step="0.1"
-            value={depreciationRate}
-            onChange={(e) => setDepreciationRate(e.target.value)}
+            value={formData.depreciationRate}
+            onChange={(e) =>
+              setFormData({ ...formData, depreciationRate: e.target.value })
+            }
             className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 border p-2"
           />
           <p className="mt-1 text-xs text-gray-500">
@@ -190,8 +221,10 @@ const AssetForm: React.FC<{
             Timeframe
           </label>
           <select
-            value={timeframe}
-            onChange={(e) => setTimeframe(e.target.value as any)}
+            value={formData.timeframe}
+            onChange={(e) =>
+              setFormData({ ...formData, timeframe: e.target.value as any })
+            }
             className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 border p-2 bg-white"
           >
             <option value="Pre and Post-Retirement">
@@ -208,8 +241,10 @@ const AssetForm: React.FC<{
         </label>
         <textarea
           rows={3}
-          value={details}
-          onChange={(e) => setDetails(e.target.value)}
+          value={formData.details}
+          onChange={(e) =>
+            setFormData({ ...formData, details: e.target.value })
+          }
           className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 border p-2"
           placeholder="Additional notes..."
         />

@@ -16,6 +16,8 @@ interface ModulePageLayoutProps<T extends { name: string }> {
   singularTitle?: string;
   items: T[];
   suggestions?: Partial<T>[];
+  stats?: React.ReactNode;
+  infoText?: React.ReactNode;
   onAdd: (item: Omit<T, "id">) => void;
   onEdit: (item: T) => void;
   onDelete: (id: string) => void;
@@ -34,6 +36,8 @@ export function ModulePageLayout<T extends { id: string; name: string }>({
   singularTitle,
   items,
   suggestions = [],
+  stats,
+  infoText,
   onAdd,
   onEdit,
   onDelete,
@@ -113,10 +117,26 @@ export function ModulePageLayout<T extends { id: string; name: string }>({
         </Link>
       </div>
 
-      <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-bold text-gray-900">{title}</h1>
-        <div className="text-sm text-gray-500">{items.length} items</div>
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+        <div>
+          <h1 className="text-3xl font-bold text-gray-900">{title}</h1>
+          <div className="text-sm text-gray-500 mt-1">
+            {items.length} item{items.length !== 1 ? "s" : ""}
+          </div>
+        </div>
       </div>
+
+      {infoText && (
+        <div className="bg-blue-50 border-l-4 border-blue-400 p-4 rounded-r-md">
+          <div className="flex">
+            <div className="ml-3">
+              <div className="text-sm text-blue-700">{infoText}</div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {stats && <div className="animate-fadeIn">{stats}</div>}
 
       {/* Collapsible Add/Edit Section */}
       <div className="bg-white rounded-lg shadow overflow-hidden border border-gray-200">

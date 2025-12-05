@@ -1,7 +1,9 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useMemo } from "react";
 import { useAuth } from "../context/AuthContext";
 import { ModulePageLayout } from "../components/ModulePageLayout";
-import { IncomeSource } from "../services/storage";
+import { IncomeSource, Timeframe } from "../services/storage";
+import { useFormPersistence } from "../hooks/useFormPersistence";
+import { ModuleStats } from "../components/ModuleStats";
 
 const INCOME_SUGGESTIONS: Partial<IncomeSource>[] = [
   {
@@ -53,15 +55,38 @@ export const IncomePage: React.FC = () => {
     saveData({ incomeSources: items.filter((i) => i.id !== id) });
   };
 
+  const chartData = useMemo(() => {
+    // Group by category for visualization
+    const grouped = items.reduce(
+      (acc, item) => {
+        const key = item.category || "Uncategorized";
+        acc[key] = (acc[key] || 0) + item.amount;
+        return acc;
+      },
+      {} as Record<string, number>,
+    );
+    return Object.entries(grouped).map(([name, value]) => ({ name, value }));
+  }, [items]);
+
   return (
     <ModulePageLayout<IncomeSource>
       title="Income Sources"
       items={items}
       suggestions={INCOME_SUGGESTIONS}
+      stats={
+        <ModuleStats
+          data={chartData}
+          type="bar"
+          dataKey="value"
+          nameKey="name"
+          title="Income by Timeframe"
+          totalLabel="Total Monthly Income"
+        />
+      }
       onAdd={handleAdd}
       onEdit={handleEdit}
       onDelete={handleDelete}
-      sortFunction={(a, b) => b.amount - a.amount} // Highest Value First
+      sortFunction={(a, b) => b.amount - a.amount}
       filterFunction={(item, term) =>
         item.name.toLowerCase().includes(term.toLowerCase())
       }
@@ -99,27 +124,41 @@ const IncomeForm: React.FC<{
   initialData?: Partial<IncomeSource>;
   onCancel?: () => void;
 }> = ({ onSubmit, initialData, onCancel }) => {
-  const [name, setName] = React.useState(initialData?.name || "");
-  const [amount, setAmount] = React.useState(
-    initialData?.amount?.toString() || "",
-  );
-  const [category, setCategory] = React.useState<IncomeSource["category"]>(
-    initialData?.category || "Pre-Retirement",
-  );
-  const [details, setDetails] = React.useState(initialData?.details || "");
+  const isEditMode = !!initialData?.id;
+  const initialFormState = {
+    name: "",
+    amount: "",
+    category: "Pre-Retirement" as Timeframe,
+    details: "",
+  };
 
+  const [formData, setFormData, clearFormData] = useFormPersistence(
+    `income_form_draft`,
+    initialFormState,
+    !isEditMode, // Only persist if NOT editing
+  );
+
+  // Load initial data if editing or if prefill is provided
   useEffect(() => {
     if (initialData) {
-      setName(initialData.name || "");
-      setAmount(initialData.amount?.toString() || "");
-      setCategory(initialData.category || "Pre-Retirement");
-      setDetails(initialData.details || "");
+      setFormData({
+        name: initialData.name || "",
+        amount: initialData.amount?.toString() || "",
+        category: initialData.category || "Pre-Retirement",
+        details: initialData.details || "",
+      });
     }
-  }, [initialData]);
+  }, [initialData, setFormData]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onSubmit({ name, amount: parseFloat(amount) || 0, category, details });
+    onSubmit({
+      name: formData.name,
+      amount: parseFloat(formData.amount) || 0,
+      category: formData.category,
+      details: formData.details,
+    });
+    if (!isEditMode) clearFormData();
   };
 
   return (
@@ -129,8 +168,8 @@ const IncomeForm: React.FC<{
         <input
           type="text"
           required
-          value={name}
-          onChange={(e) => setName(e.target.value)}
+          value={formData.name}
+          onChange={(e) => setFormData({ ...formData, name: e.target.value })}
           className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 border p-2"
         />
         <p className="mt-1 text-xs text-gray-500">
@@ -150,8 +189,10 @@ const IncomeForm: React.FC<{
             required
             min="0"
             step="0.01"
-            value={amount}
-            onChange={(e) => setAmount(e.target.value)}
+            value={formData.amount}
+            onChange={(e) =>
+              setFormData({ ...formData, amount: e.target.value })
+            }
             className="block w-full rounded-md border-gray-300 pl-7 focus:border-blue-500 focus:ring-blue-500 border p-2"
           />
         </div>
@@ -161,8 +202,10 @@ const IncomeForm: React.FC<{
           Income Category (Timeframe)
         </label>
         <select
-          value={category}
-          onChange={(e) => setCategory(e.target.value as any)}
+          value={formData.category}
+          onChange={(e) =>
+            setFormData({ ...formData, category: e.target.value as any })
+          }
           className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 border p-2 bg-white"
         >
           <option value="Pre-Retirement">Pre-Retirement</option>
@@ -178,8 +221,10 @@ const IncomeForm: React.FC<{
         </label>
         <textarea
           rows={3}
-          value={details}
-          onChange={(e) => setDetails(e.target.value)}
+          value={formData.details}
+          onChange={(e) =>
+            setFormData({ ...formData, details: e.target.value })
+          }
           className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 border p-2"
           placeholder="Additional notes..."
         />

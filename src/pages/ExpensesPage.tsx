@@ -1,7 +1,9 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useMemo } from "react";
 import { useAuth } from "../context/AuthContext";
 import { ModulePageLayout } from "../components/ModulePageLayout";
 import { Expense, Timeframe } from "../services/storage";
+import { useFormPersistence } from "../hooks/useFormPersistence";
+import { ModuleStats } from "../components/ModuleStats";
 
 const EXPENSE_SUGGESTIONS: Partial<Expense>[] = [
   {
@@ -66,11 +68,40 @@ export const ExpensesPage: React.FC = () => {
     saveData({ expenses: items.filter((i) => i.id !== id) });
   };
 
+  const chartData = useMemo(() => {
+    const grouped = items.reduce(
+      (acc, item) => {
+        const key = item.retirementCategory;
+        acc[key] = (acc[key] || 0) + item.amount;
+        return acc;
+      },
+      {} as Record<string, number>,
+    );
+    return Object.entries(grouped).map(([name, value]) => ({ name, value }));
+  }, [items]);
+
   return (
     <ModulePageLayout<Expense>
       title="Expenses"
       items={items}
       suggestions={EXPENSE_SUGGESTIONS}
+      infoText={
+        <span>
+          <strong>Expenses vs. Liabilities:</strong> Use "Expenses" for
+          recurring costs like groceries, utilities, and insurance. Use
+          "Liabilities" for debts with a total balance, like loans or mortgages.
+        </span>
+      }
+      stats={
+        <ModuleStats
+          data={chartData}
+          type="pie"
+          dataKey="value"
+          nameKey="name"
+          title="Expense Priority"
+          totalLabel="Total Monthly Expenses"
+        />
+      }
       onAdd={handleAdd}
       onEdit={handleEdit}
       onDelete={handleDelete}
@@ -117,37 +148,43 @@ const ExpenseForm: React.FC<{
   initialData?: Partial<Expense>;
   onCancel?: () => void;
 }> = ({ onSubmit, initialData, onCancel }) => {
-  const [name, setName] = React.useState(initialData?.name || "");
-  const [amount, setAmount] = React.useState(
-    initialData?.amount?.toString() || "",
+  const isEditMode = !!initialData?.id;
+  const initialFormState = {
+    name: "",
+    amount: "",
+    retirementCategory: "Required" as Expense["retirementCategory"],
+    timeframe: "Pre and Post-Retirement" as Timeframe,
+    details: "",
+  };
+
+  const [formData, setFormData, clearFormData] = useFormPersistence(
+    `expense_form_draft`,
+    initialFormState,
+    !isEditMode,
   );
-  const [retirementCategory, setRetirementCategory] = React.useState<
-    Expense["retirementCategory"]
-  >(initialData?.retirementCategory || "Required");
-  const [timeframe, setTimeframe] = React.useState<Timeframe>(
-    initialData?.timeframe || "Pre and Post-Retirement",
-  );
-  const [details, setDetails] = React.useState(initialData?.details || "");
 
   useEffect(() => {
     if (initialData) {
-      setName(initialData.name || "");
-      setAmount(initialData.amount?.toString() || "");
-      setRetirementCategory(initialData.retirementCategory || "Required");
-      setTimeframe(initialData.timeframe || "Pre and Post-Retirement");
-      setDetails(initialData.details || "");
+      setFormData({
+        name: initialData.name || "",
+        amount: initialData.amount?.toString() || "",
+        retirementCategory: initialData.retirementCategory || "Required",
+        timeframe: initialData.timeframe || "Pre and Post-Retirement",
+        details: initialData.details || "",
+      });
     }
-  }, [initialData]);
+  }, [initialData, setFormData]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     onSubmit({
-      name,
-      amount: parseFloat(amount) || 0,
-      retirementCategory,
-      timeframe,
-      details,
+      name: formData.name,
+      amount: parseFloat(formData.amount) || 0,
+      retirementCategory: formData.retirementCategory,
+      timeframe: formData.timeframe,
+      details: formData.details,
     });
+    if (!isEditMode) clearFormData();
   };
 
   return (
@@ -157,8 +194,8 @@ const ExpenseForm: React.FC<{
         <input
           type="text"
           required
-          value={name}
-          onChange={(e) => setName(e.target.value)}
+          value={formData.name}
+          onChange={(e) => setFormData({ ...formData, name: e.target.value })}
           className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 border p-2"
         />
       </div>
@@ -175,8 +212,10 @@ const ExpenseForm: React.FC<{
             required
             min="0"
             step="0.01"
-            value={amount}
-            onChange={(e) => setAmount(e.target.value)}
+            value={formData.amount}
+            onChange={(e) =>
+              setFormData({ ...formData, amount: e.target.value })
+            }
             className="block w-full rounded-md border-gray-300 pl-7 focus:border-blue-500 focus:ring-blue-500 border p-2"
           />
         </div>
@@ -187,8 +226,13 @@ const ExpenseForm: React.FC<{
             Priority
           </label>
           <select
-            value={retirementCategory}
-            onChange={(e) => setRetirementCategory(e.target.value as any)}
+            value={formData.retirementCategory}
+            onChange={(e) =>
+              setFormData({
+                ...formData,
+                retirementCategory: e.target.value as any,
+              })
+            }
             className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 border p-2 bg-white"
           >
             <option value="Required">Required</option>
@@ -200,8 +244,10 @@ const ExpenseForm: React.FC<{
             Timeframe
           </label>
           <select
-            value={timeframe}
-            onChange={(e) => setTimeframe(e.target.value as any)}
+            value={formData.timeframe}
+            onChange={(e) =>
+              setFormData({ ...formData, timeframe: e.target.value as any })
+            }
             className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 border p-2 bg-white"
           >
             <option value="Pre and Post-Retirement">
@@ -218,8 +264,10 @@ const ExpenseForm: React.FC<{
         </label>
         <textarea
           rows={3}
-          value={details}
-          onChange={(e) => setDetails(e.target.value)}
+          value={formData.details}
+          onChange={(e) =>
+            setFormData({ ...formData, details: e.target.value })
+          }
           className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 border p-2"
           placeholder="Additional notes..."
         />

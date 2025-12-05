@@ -1,8 +1,10 @@
 
-import React, { useEffect } from "react";
+import React, { useEffect, useMemo } from "react";
 import { useAuth } from "../context/AuthContext";
 import { ModulePageLayout } from "../components/ModulePageLayout";
 import { InvestmentAccount, Timeframe } from "../services/storage";
+import { useFormPersistence } from "../hooks/useFormPersistence";
+import { ModuleStats } from "../components/ModuleStats";
 
 const INVESTMENT_SUGGESTIONS: Partial<InvestmentAccount>[] = [
 {
@@ -93,12 +95,34 @@ const handleDelete = (id: string) => {
 saveData({ investmentAccounts: items.filter((i) => i.id !== id) });
 };
 
+const chartData = useMemo(() => {
+const grouped = items.reduce(
+(acc, item) => {
+const key = item.accountType;
+acc[key] = (acc[key] || 0) + item.balance;
+return acc;
+},
+{} as Record<string, number>,
+);
+return Object.entries(grouped).map(([name, value]) => ({ name, value }));
+}, [items]);
+
 return (
 <ModulePageLayout<InvestmentAccount>
 title="Investment Accounts"
 singularTitle="Investment Account"
 items={items}
 suggestions={INVESTMENT_SUGGESTIONS}
+stats={
+<ModuleStats
+data={chartData}
+type="pie"
+dataKey="value"
+nameKey="name"
+title="Allocation by Account Type"
+totalLabel="Total Portfolio"
+/>
+}
 onAdd={handleAdd}
 onEdit={handleEdit}
 onDelete={handleDelete}
@@ -159,61 +183,57 @@ onSubmit: (data: any) => void;
 initialData?: Partial<InvestmentAccount>;
 onCancel?: () => void;
 }> = ({ onSubmit, initialData, onCancel }) => {
-const [name, setName] = React.useState(initialData?.name || "");
-const [balance, setBalance] = React.useState(
-initialData?.balance?.toString() || "",
-);
-const [monthlyContribution, setMonthlyContribution] = React.useState(
-initialData?.monthlyContribution?.toString() || "0",
-);
-const [accountType, setAccountType] = React.useState<
-InvestmentAccount["accountType"]
+const isEditMode = !!initialData?.id;
+const initialFormState = {
+name: "",
+balance: "",
+monthlyContribution: "0",
+accountType: "Investment (tax advantaged)" as InvestmentAccount["accountType"],
+riskProfile: "Medium" as InvestmentAccount["riskProfile"],
+estimatedReturn: "7",
+accountNumberLast4: "",
+timeframe: "Pre and Post-Retirement" as Timeframe,
+details: "",
+};
 
-> (initialData?.accountType || "Investment (tax advantaged)");
-> const [riskProfile, setRiskProfile] = React.useState<
-> InvestmentAccount["riskProfile"]
-> (initialData?.riskProfile || "Medium");
-> const [estimatedReturn, setEstimatedReturn] = React.useState(
-> initialData?.estimatedReturn?.toString() || "7",
-> );
-> const [accountNumberLast4, setAccountNumberLast4] = React.useState(
-> initialData?.accountNumberLast4 || "",
-> );
-> const [timeframe, setTimeframe] = React.useState<Timeframe>(
-> initialData?.timeframe || "Pre and Post-Retirement",
-> );
-> const [details, setDetails] = React.useState(initialData?.details || "");
+const [formData, setFormData, clearFormData] = useFormPersistence(
+`investment_form_draft`,
+initialFormState,
+!isEditMode,
+);
 
-// Update form when initialData changes (e.g., from quick add suggestion)
 useEffect(() => {
 if (initialData) {
-setName(initialData.name || "");
-setBalance(initialData.balance?.toString() || "");
-setMonthlyContribution(initialData.monthlyContribution?.toString() || "");
-setAccountType(
+setFormData({
+name: initialData.name || "",
+balance: initialData.balance?.toString() || "",
+monthlyContribution:
+initialData.monthlyContribution?.toString() || "0",
+accountType:
 initialData.accountType || "Investment (tax advantaged)",
-);
-setRiskProfile(initialData.riskProfile || "Medium");
-setEstimatedReturn(initialData.estimatedReturn?.toString() || "7");
-setAccountNumberLast4(initialData.accountNumberLast4 || "");
-setTimeframe(initialData.timeframe || "Pre and Post-Retirement");
-setDetails(initialData.details || "");
+riskProfile: initialData.riskProfile || "Medium",
+estimatedReturn: initialData.estimatedReturn?.toString() || "7",
+accountNumberLast4: initialData.accountNumberLast4 || "",
+timeframe: initialData.timeframe || "Pre and Post-Retirement",
+details: initialData.details || "",
+});
 }
-}, [initialData]);
+}, [initialData, setFormData]);
 
 const handleSubmit = (e: React.FormEvent) => {
 e.preventDefault();
 onSubmit({
-name,
-balance: parseFloat(balance) || 0,
-monthlyContribution: parseFloat(monthlyContribution) || 0,
-accountType,
-riskProfile,
-estimatedReturn: parseFloat(estimatedReturn) || 0,
-accountNumberLast4,
-timeframe,
-details,
+name: formData.name,
+balance: parseFloat(formData.balance) || 0,
+monthlyContribution: parseFloat(formData.monthlyContribution) || 0,
+accountType: formData.accountType,
+riskProfile: formData.riskProfile,
+estimatedReturn: parseFloat(formData.estimatedReturn) || 0,
+accountNumberLast4: formData.accountNumberLast4,
+timeframe: formData.timeframe,
+details: formData.details,
 });
+if (!isEditMode) clearFormData();
 };
 
 return (
@@ -226,8 +246,8 @@ Account Name / Provider
 <input
 type="text"
 required
-value={name}
-onChange={(e) => setName(e.target.value)}
+value={formData.name}
+onChange={(e) => setFormData({ ...formData, name: e.target.value })}
 className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 border p-2"
 />
 </div>
@@ -238,9 +258,12 @@ Account Number (last 4)
 <input
 type="text"
 maxLength={4}
-value={accountNumberLast4}
+value={formData.accountNumberLast4}
 onChange={(e) =>
-setAccountNumberLast4(e.target.value.replace(/\\D/g, ""))
+setFormData({
+...formData,
+accountNumberLast4: e.target.value.replace(/\\D/g, ""),
+})
 }
 className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 border p-2"
 placeholder="XXXX"
@@ -261,8 +284,10 @@ Balance
 type="number"
 required
 min="0"
-value={balance}
-onChange={(e) => setBalance(e.target.value)}
+value={formData.balance}
+onChange={(e) =>
+setFormData({ ...formData, balance: e.target.value })
+}
 className="block w-full rounded-md border-gray-300 pl-7 focus:border-blue-500 focus:ring-blue-500 border p-2"
 />
 </div>
@@ -279,8 +304,13 @@ Monthly Contribution *
 type="number"
 required
 min="0"
-value={monthlyContribution}
-onChange={(e) => setMonthlyContribution(e.target.value)}
+value={formData.monthlyContribution}
+onChange={(e) =>
+setFormData({
+...formData,
+monthlyContribution: e.target.value,
+})
+}
 className="block w-full rounded-md border-gray-300 pl-7 focus:border-blue-500 focus:ring-blue-500 border p-2"
 />
 &lt;/div&gt;
@@ -295,8 +325,10 @@ className="block w-full rounded-md border-gray-300 pl-7 focus:border-blue-500 fo
 Account Type
 &lt;/label&gt;
 <select
-value={accountType}
-onChange={(e) => setAccountType(e.target.value as any)}
+value={formData.accountType}
+onChange={(e) =>
+setFormData({ ...formData, accountType: e.target.value as any })
+}
 className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 border p-2 bg-white"
 >
 &lt;option value=&quot;Checking&quot;&gt;Checking&lt;/option&gt;
@@ -314,8 +346,10 @@ Investment (non-tax advantaged)
 Risk Profile
 &lt;/label&gt;
 <select
-value={riskProfile}
-onChange={(e) => setRiskProfile(e.target.value as any)}
+value={formData.riskProfile}
+onChange={(e) =>
+setFormData({ ...formData, riskProfile: e.target.value as any })
+}
 className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 border p-2 bg-white"
 >
 &lt;option value=&quot;Low&quot;&gt;Low&lt;/option&gt;
@@ -339,8 +373,10 @@ Estimated Annual Interest %
 type="number"
 required
 step="0.1"
-value={estimatedReturn}
-onChange={(e) => setEstimatedReturn(e.target.value)}
+value={formData.estimatedReturn}
+onChange={(e) =>
+setFormData({ ...formData, estimatedReturn: e.target.value })
+}
 className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 border p-2"
 />
 &lt;/div&gt;
@@ -349,8 +385,10 @@ className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-b
 Timeframe
 &lt;/label&gt;
 <select
-value={timeframe}
-onChange={(e) => setTimeframe(e.target.value as any)}
+value={formData.timeframe}
+onChange={(e) =>
+setFormData({ ...formData, timeframe: e.target.value as any })
+}
 className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 border p-2 bg-white"
 >
 &lt;option value=&quot;Pre and Post-Retirement&quot;&gt;
@@ -367,8 +405,10 @@ Details (Optional)
 &lt;/label&gt;
 <textarea
 rows={3}
-value={details}
-onChange={(e) => setDetails(e.target.value)}
+value={formData.details}
+onChange={(e) =>
+setFormData({ ...formData, details: e.target.value })
+}
 className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 border p-2"
 placeholder="Additional notes..."
 />
