@@ -4,7 +4,7 @@
 - [ ] Fix the following build errors:
     ```text
 
-added 178 packages, and audited 491 packages in 4s
+up to date, audited 491 packages in 603ms
 
 118 packages are looking for funding
   run `npm fund` for details
@@ -19,17 +19,17 @@ Run `npm audit` for details.
 > rocket-fi@0.1.0 build
 > tsc && vite build
 
-src/lib/llm.ts(65,22): error TS1127: Invalid character.
-src/lib/llm.ts(65,23): error TS1134: Variable declaration expected.
-src/lib/llm.ts(107,22): error TS1005: ';' expected.
-src/lib/llm.ts(107,27): error TS1228: A type predicate is only allowed in return type position for functions and methods.
-src/lib/llm.ts(107,30): error TS1434: Unexpected keyword or identifier.
-src/lib/llm.ts(107,33): error TS1434: Unexpected keyword or identifier.
-src/lib/llm.ts(107,43): error TS1434: Unexpected keyword or identifier.
-src/lib/llm.ts(107,54): error TS1127: Invalid character.
-src/lib/llm.ts(138,17): error TS1005: ';' expected.
-src/lib/llm.ts(138,24): error TS1434: Unexpected keyword or identifier.
-src/lib/llm.ts(167,1): error TS1160: Unterminated template literal.
+src/lib/llm.ts(64,22): error TS1127: Invalid character.
+src/lib/llm.ts(64,23): error TS1134: Variable declaration expected.
+src/lib/llm.ts(105,22): error TS1005: ';' expected.
+src/lib/llm.ts(105,27): error TS1228: A type predicate is only allowed in return type position for functions and methods.
+src/lib/llm.ts(105,30): error TS1434: Unexpected keyword or identifier.
+src/lib/llm.ts(105,33): error TS1434: Unexpected keyword or identifier.
+src/lib/llm.ts(105,43): error TS1434: Unexpected keyword or identifier.
+src/lib/llm.ts(105,54): error TS1127: Invalid character.
+src/lib/llm.ts(135,17): error TS1005: ';' expected.
+src/lib/llm.ts(135,24): error TS1434: Unexpected keyword or identifier.
+src/lib/llm.ts(164,1): error TS1160: Unterminated template literal.
     ```
 
 
@@ -126,15 +126,15 @@ _General UI Requirements for all lists below: Sort items by highest value first,
 
 ## Phase 7: Reports & AI Agent Integration
 
-- [ ] **LLM Integration**:
-  - [ ] API: Connect to OpenRouter.ai.
-  - [ ] Model Selection: Dropdown filtered by "free" models (Default: `google/gemma-3-27b-it:free`).
-  - [ ] Token Stats: Show estimated token usage/cost at bottom of report.
-- [ ] **Prompt Engineering**:
-  - [ ] **Context Injection**: Include Dependencies (and their ages), User State, Date, "3-Bucket" definition, and disclaimer.
-  - [ ] **Review Feature**: Add "Review AI Prompt Before Sending" toggle button to show raw prompt text.
-- [ ] **Report UI**:
-  - [ ] **Persistence**: Save last generated report and timestamp to LocalStorage.
-  - [ ] **Formatting**: Left-align text (fix centering issues), use proper headers/markdown rendering.
-  - [ ] **Insights**: Limit Pre/Post retirement insight tables to Top 5 items (collapsible "Show More").
-  - [ ] **Loading State**: "Crunching the numbers..." with spinner.
+- [x] **LLM Integration**:
+  - [x] API: Connect to OpenRouter.ai.
+  - [x] Model Selection: Dropdown filtered by "free" models (Default: `google/gemma-3-27b-it:free`).
+  - [x] Token Stats: Show estimated token usage/cost at bottom of report.
+- [x] **Prompt Engineering**:
+  - [x] **Context Injection**: Include Dependencies (and their ages), User State, Date, "3-Bucket" definition, and disclaimer.
+  - [x] **Review Feature**: Add "Review AI Prompt Before Sending" toggle button to show raw prompt text.
+- [x] **Report UI**:
+  - [x] **Persistence**: Save last generated report and timestamp to LocalStorage.
+  - [x] **Formatting**: Left-align text (fix centering issues), use proper headers/markdown rendering.
+  - [x] **Insights**: Limit Pre/Post retirement insight tables to Top 5 items (collapsible "Show More").
+  - [x] **Loading State**: "Crunching the numbers..." with spinner.

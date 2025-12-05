@@ -40,9 +40,8 @@ const remaining = sorted.slice(limit);
 const result = topItems.map((item) => ({
 name: item[nameKey],
 value: item[valueKey],
-// Include specific details based on type if needed, effectively "any" here for brevity
-...((item as any).category ? { category: (item as any).category } : {}),
-...((item as any).type ? { type: (item as any).type } : {}),
+...(item.category ? { category: item.category } : {}),
+...(item.type ? { type: item.type } : {}),
 }));
 
 if (remaining.length > 0) {
@@ -74,8 +73,7 @@ Methodologies to apply:
 2.  Tax Efficiency: Optimize asset location (Tax-Advantaged vs Taxable).
 3.  Risk Management: Assess if asset allocation matches the user's life stage.
 
-Disclaimer: You are an AI, not a certified financial advisor. Provide educational insights, not binding financial advice.
-\`;
+Disclaimer: You are an AI, not a certified financial advisor. Provide educational insights, not binding financial advice.\`;
 
 // Construct context
 const financialContext = {
@@ -114,8 +112,7 @@ Please provide a Report with the following sections (use Markdown headers):
 2.  **3-Bucket Analysis**: How well my current investments fit the liquidity/stability/growth model.
 3.  **Tax & Location Optimization**: Specific advice based on my state (${user.state || "Unknown"}) and account types.
 4.  **Risk Assessment**: Analysis of portfolio risk vs timeline.
-5.  **Action Plan**: 3 bullet points of high-impact moves I should consider.
-    \`;
+5.  **Action Plan**: 3 bullet points of high-impact moves I should consider.\`;
 
 return { systemPrompt, userMessage };
 };
