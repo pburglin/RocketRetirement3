@@ -1,29 +1,36 @@
+import React from "react";
 import { AuthProvider } from "./context/AuthContext";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { Header } from "./components/Header";
 import { LandingPage } from "./pages/LandingPage";
 import { PrivacyPolicyPage } from "./pages/PrivacyPolicyPage";
 import { FAQPage } from "./pages/FAQPage";
+import { LoginPage } from "./pages/LoginPage";
+import { SignupPage } from "./pages/SignupPage";
+import { UserProfilePage } from "./pages/UserProfilePage";
+import { useAuth } from "./context/AuthContext";
+
+// Protected Route Component
+const ProtectedRoute: React.FC<{ children: React.ReactElement }> = ({
+  children,
+}) => {
+  const { user } = useAuth();
+  if (!user) {
+    return <Navigate to="/login" replace />;
+  }
+  return children;
+};
 
 // Placeholder components for future implementation
 const Dashboard = () => (
   <div className="max-w-7xl mx-auto p-8">
     <h1 className="text-2xl font-bold mb-4">Dashboard</h1>
     <p>Coming soon...</p>
-  </div>
-);
-
-const Login = () => (
-  <div className="max-w-md mx-auto mt-20 p-8 bg-white shadow rounded">
-    <h1 className="text-2xl font-bold mb-4">Login</h1>
-    <p className="text-gray-600">Login form placeholder</p>
-  </div>
-);
-
-const Signup = () => (
-  <div className="max-w-md mx-auto mt-20 p-8 bg-white shadow rounded">
-    <h1 className="text-2xl font-bold mb-4">Sign Up</h1>
-    <p className="text-gray-600">Sign up form placeholder</p>
+    <div className="mt-4">
+      <a href="/profile" className="text-blue-600 hover:underline">
+        Manage User Profile
+      </a>
+    </div>
   </div>
 );
 
@@ -39,17 +46,33 @@ function App() {
               <Route path="/" element={<LandingPage />} />
               <Route
                 path="/how-it-works"
-                element={<Navigate to="/\#how-it-works" replace />}
+                element={<Navigate to="/#how-it-works" replace />}
               />
               <Route path="/privacy" element={<PrivacyPolicyPage />} />
               <Route path="/faq" element={<FAQPage />} />
 
-              {/* Auth Routes (Placeholders) */}
-              <Route path="/login" element={<Login />} />
-              <Route path="/signup" element={<Signup />} />
+              {/* Auth Routes */}
+              <Route path="/login" element={<LoginPage />} />
+              <Route path="/signup" element={<SignupPage />} />
 
               {/* Protected Routes */}
-              <Route path="/dashboard" element={<Dashboard />} />
+              <Route
+                path="/dashboard"
+                element={
+                  <ProtectedRoute>
+                    <Dashboard />
+                  </ProtectedRoute>
+                }
+              />
+
+              <Route
+                path="/profile"
+                element={
+                  <ProtectedRoute>
+                    <UserProfilePage />
+                  </ProtectedRoute>
+                }
+              />
 
               {/* Fallback */}
               <Route path="*" element={<Navigate to="/" replace />} />

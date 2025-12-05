@@ -1,14 +1,21 @@
 import { encryptData, decryptData } from "../utils/crypto";
 
+export interface Dependent {
+  id: string;
+  name: string;
+  age: number;
+}
+
 export interface UserProfile {
   username: string;
   createdAt: string;
-  // Personal Details
-  dob?: string;
+
+  // Personal Details (No PII like Name/Email/Phone/Address)
+  dob?: string; // YYYY-MM-DD
   maritalStatus?: string;
   employmentStatus?: string;
   state?: string;
-  dependents?: any[]; // Defined more strictly later
+  dependents?: Dependent[];
 
   // Financial Modules (Arrays)
   incomeSources?: any[];
@@ -32,8 +39,12 @@ export const StorageService = {
       console.error("Cannot save: Missing username or key");
       return;
     }
-    const encrypted = encryptData(user, key);
-    localStorage.setItem(`${STORAGE_PREFIX}${user.username}`, encrypted);
+    try {
+      const encrypted = encryptData(user, key);
+      localStorage.setItem(`${STORAGE_PREFIX}${user.username}`, encrypted);
+    } catch (e) {
+      console.error("Encryption failed during save:", e);
+    }
   },
 
   /**
@@ -65,5 +76,12 @@ export const StorageService = {
       }
     }
     return users;
+  },
+
+  /**
+   * Deletes a user profile from LocalStorage.
+   */
+  deleteUser: (username: string): void => {
+    localStorage.removeItem(`${STORAGE_PREFIX}${username}`);
   },
 };
