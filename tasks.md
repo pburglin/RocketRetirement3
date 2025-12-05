@@ -105,6 +105,16 @@ _General UI Requirements for all lists below: Sort items by highest value first,
   - [x] **Formatting**: Left-align text (fix centering issues), use proper headers/markdown rendering.
   - [x] **Insights**: Limit Pre/Post retirement insight tables to Top 5 items (collapsible "Show More").
   - [x] **Loading State**: "Crunching the numbers..." with spinner.
+  - [ ] **Model Selection Enhancements**:
+    - [ ] **Expand Model List**: Query the OpenRouter API to list *all* available free models dynamically, rather than a hardcoded selection.
+  - [ ] **User Guidance**: Add tooltip/help text suggesting users try different models to obtain diverse financial perspectives or "second opinions."
+- [ ] **Report History & UI**:
+  - [ ] **History Logic**: Persist generated reports in LocalStorage. Display the most recent report at the top (expanded) and previous reports at the bottom (collapsed/accordion style).
+  - [ ] **Privacy Clarity**: Expand the Privacy Note to explicitly mention: "You can expand the AI Prompt section below to see exactly what data is being shared with the model before generation."
+- [ ] **Advanced AI Features**:
+  - [ ] **Beneficiaries Checklist**: Create a specific prompt/action to generate a "Beneficiary Audit" list (checking titles, deeds, and account designations).
+  - [ ] **Open-Ended Chat**: Add a generic "Ask the Planner" interface allowing users to ask free-form questions based on their currently loaded financial context.
+  - [ ] **Prompt Configuration**: Externalize the base System Prompts into the `.env` file (or a dedicated config object) to allow easier tweaking of the AI persona without altering application code.
 
 ## Phase 8: Fixing functional issues
 
@@ -122,3 +132,18 @@ _General UI Requirements for all lists below: Sort items by highest value first,
 - [x] in Financial Dashboard screen, add a Financial Snapshot section with cards for: Total Assets, Total Liabilities, Net Worth. add a Monthly Cash Flow section with cards for: Total Monthly Income, Total Monthly Expenses, Monthly Surplus/Deficit.
 - [x] in Simulations screen, add verbiage and insights to help user understand the simulation results
 - [x] in Simulations screen, allow user to change the life expectancy and take it into account in our simulations. it seems to be hardcoded to 90 years. also allow user to set inflation rate and "Annual Retirement Spending (Today's Dollars)".
+- [ ] **State Management**: Implement global state persistence (or Context preservation) to ensure field values are not lost when navigating between screens without saving.
+- [ ] **Visual Enhancements**:
+  - [ ] **Contextual Stats**: Add small, collapsible statistical charts to every CRUD screen (e.g., an asset allocation pie chart on the Assets screen).
+- [ ] **User Education**:
+  - [ ] **Definitions**: Add a clearly visible tooltip or info box distinguishing "Expenses" (recurring/lifestyle costs) vs. "Liabilities" (debts/loans with balances).
+- [ ] **Bug Fixes**:
+  - [ ] **PDF Export**: Fix layout engine to prevent page breaks from cutting off text or graphs in the generated PDF report. If this is not possible, lets remove the page breaks to avoid duplicated and cropped content between pages.
+
+### Create **Phase 9: Mobile Adaptation & Deployment**
+
+- [ ] **Progressive Web App (PWA)**:
+  - [ ] **Manifest**: Create `manifest.json` for installability.
+  - [ ] **Service Worker**: Implement basic caching for offline capability.
+  - [ ] **iOS Optimization**: Ensure meta tags and touch icons are configured for "Add to Home Screen" on iOS.
+- [ ] **Mobile Layout**: Audit all charts and tables for responsiveness on small screens.

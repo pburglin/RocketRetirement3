@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import jsPDF from "jspdf";
+import html2canvas from "html2canvas";
 import { useAuth } from "../context/AuthContext";
 import {
   fetchLLMAnalysis,
@@ -19,6 +21,7 @@ import {
   TrendingUp,
   AlertTriangle,
   CheckCircle,
+  Download,
 } from "lucide-react";
 
 export const ReportsInsightsPage: React.FC = () => {
@@ -28,6 +31,8 @@ export const ReportsInsightsPage: React.FC = () => {
   const [report, setReport] = useState<LLMResponse | null>(null);
   const [showPrompt, setShowPrompt] = useState(false);
   const [error, setError] = useState("");
+  const [showExportModal, setShowExportModal] = useState(false);
+  const [exporting, setExporting] = useState(false);
 
   // Load persisted report on mount
   useEffect(() => {
@@ -63,13 +68,78 @@ export const ReportsInsightsPage: React.FC = () => {
     return `### SYSTEM:\n${systemPrompt}\n\n### USER:\n${userMessage}`;
   };
 
+  const handleExportPDF = async () => {
+    if (!report) return;
+
+    setExporting(true);
+    try {
+      const element = document.getElementById('report-content');
+      if (!element) return;
+
+      const canvas = await html2canvas(element, {
+        scale: 2,
+        useCORS: true,
+        backgroundColor: '#ffffff',
+        allowTaint: true
+      });
+
+      const imgData = canvas.toDataURL('image/png');
+      const pdf = new jsPDF('p', 'mm', 'a4');
+      
+      // PDF page dimensions (A4)
+      const pdfWidth = 210;
+      const pdfHeight = 295;
+      
+      // Margins (20mm on each side)
+      const margin = 20;
+      const imgWidth = pdfWidth - (margin * 2); // Content width with margins
+      const pageHeight = pdfHeight - (margin * 2); // Content height with margins
+      
+      // Calculate scaled image dimensions
+      const imgHeight = (canvas.height * imgWidth) / canvas.width;
+      let heightLeft = imgHeight;
+
+      let position = margin; // Start with top margin
+
+      // Add first page with image
+      pdf.addImage(imgData, 'PNG', margin, position, imgWidth, imgHeight);
+      heightLeft -= pageHeight;
+
+      // Add additional pages if content is longer than one page
+      while (heightLeft >= 0) {
+        position = heightLeft - imgHeight + margin;
+        pdf.addPage();
+        pdf.addImage(imgData, 'PNG', margin, position, imgWidth, imgHeight);
+        heightLeft -= pageHeight;
+      }
+
+      const timestamp = new Date().toISOString().split('T')[0];
+      pdf.save(`rocketfi_report_${timestamp}.pdf`);
+    } catch (error) {
+      console.error('Error generating PDF:', error);
+    } finally {
+      setExporting(false);
+      setShowExportModal(false);
+    }
+  };
+
   return (
     <div className="max-w-7xl mx-auto p-6 space-y-8">
-      <div className="flex items-center gap-3">
-        <Brain className="w-8 h-8 text-purple-600" />
-        <h1 className="text-3xl font-bold text-gray-900">
-          AI Insights & Reports
-        </h1>
+      <div className="flex justify-between items-center">
+        <div className="flex items-center gap-3">
+          <Brain className="w-8 h-8 text-purple-600" />
+          <h1 className="text-3xl font-bold text-gray-900">
+            AI Insights & Reports
+          </h1>
+        </div>
+        {report && (
+          <button
+            onClick={() => setShowExportModal(true)}
+            className="flex items-center gap-2 px-4 py-2 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200"
+          >
+            <Download size={16} /> Export
+          </button>
+        )}
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
@@ -180,7 +250,7 @@ export const ReportsInsightsPage: React.FC = () => {
               </div>
 
               <div className="p-8">
-                <div className="report-content prose prose-slate max-w-none">
+                <div id="report-content" className="report-content prose prose-slate max-w-none">
                   <style>{`
                     .report-content {
                       font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
@@ -377,6 +447,44 @@ export const ReportsInsightsPage: React.FC = () => {
           )}
         </div>
       </div>
+
+      {/* Export Modal */}
+      {showExportModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 max-w-sm w-full">
+            <h3 className="text-lg font-bold mb-4">Export Report</h3>
+            <p className="text-sm text-gray-600 mb-6">
+              Export your financial analysis report as a PDF document.
+            </p>
+            <div className="space-y-3">
+              <button
+                onClick={handleExportPDF}
+                disabled={exporting}
+                className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-blue-50 text-blue-700 rounded-lg border border-blue-200 hover:bg-blue-100 disabled:opacity-50"
+              >
+                {exporting ? (
+                  <>
+                    <Loader2 className="animate-spin h-4 w-4" />
+                    <span>Generating PDF...</span>
+                  </>
+                ) : (
+                  <>
+                    <Download size={16} />
+                    <span>Export as PDF</span>
+                  </>
+                )}
+              </button>
+              <button
+                onClick={() => setShowExportModal(false)}
+                disabled={exporting}
+                className="w-full py-2 text-gray-500 hover:text-gray-700 mt-2 disabled:opacity-50"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
