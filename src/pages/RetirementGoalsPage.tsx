@@ -262,7 +262,7 @@ isDanger?: boolean;
 {title}
 </h3>
 <p
-className={`mt-2 text-3xl font-bold ${isDanger ? "text-red-600" : "text-gray-900"}`}
+className={`mt-2 text-3xl font-bold ${isDanger ? &quot;text-red-600&quot; : &quot;text-gray-900&quot;}`}
 >
 ${Math.round(value).toLocaleString()}
 </p>
