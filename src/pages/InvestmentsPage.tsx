@@ -145,7 +145,7 @@ renderItem={(item) => (
 ${item.balance.toLocaleString()}
 </span>
 <span className="text-green-600">
-+${item.monthlyContribution?.toLocaleString() || 0}/mo
++${item.monthlyContribution?.toLocaleString() || 0}/mo*
 </span>
 <span className="px-2 py-0.5 rounded-full bg-blue-50 text-blue-800 text-xs">
 {item.accountType}
