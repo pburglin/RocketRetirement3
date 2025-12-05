@@ -60,8 +60,8 @@ const leftMargin = useMemo(() => {
 if (data.length === 0) return 0;
 const maxValue = Math.max(...data.map((d) => d.netWorth));
 // Approximate format: $XXX,XXXk
-const formattedValue = `$${Math.round(maxValue / 1000).toLocaleString()}k\`;
-// Approx 8px per character, minus default YAxis width (\~60px), with buffer
+const formattedValue = `$${Math.round(maxValue / 1000).toLocaleString()}k`;
+// Approx 8px per character, minus default YAxis width (~60px), with buffer
 const estimatedWidth = formattedValue.length * 8;
 return Math.max(0, estimatedWidth - 35); // Increase margin if text exceeds typical width
 }, [data]);
@@ -266,16 +266,15 @@ title: string;
 value: number;
 isDanger?: boolean;
 }) => (
-
 <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-<h3 className="text-gray-500 text-sm font-medium uppercase tracking-wider">
-{title}
-</h3>
-<p
-className={`mt-2 text-3xl font-bold ${isDanger ? &quot;text-red-600&quot; : &quot;text-gray-900&quot;}`}
->
-${Math.round(value).toLocaleString()}
-</p>
+  <h3 className="text-gray-500 text-sm font-medium uppercase tracking-wider">
+    {title}
+  </h3>
+  <p
+    className={`mt-2 text-3xl font-bold ${isDanger ? "text-red-600" : "text-gray-900"}`}
+  >
+    ${Math.round(value).toLocaleString()}
+  </p>
 </div>
 );
 
