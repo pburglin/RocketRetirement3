@@ -30,7 +30,7 @@ export const DashboardPage: React.FC = () => {
         </Link>
       </div>
 
-      {/* Summary Cards Row (keeping the quick links) */}
+      {/* Summary Cards Row */}
       <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
         <QuickLink
           to="/income"
@@ -169,7 +169,7 @@ const CollapsibleSection = ({
   children,
   path,
   isMonthly = false,
-  isNegative = false, // Keep prop for unused warning fix but logic is in SimpleList/Parent
+  isNegative = false,
 }: {
   title: string;
   count: number;
@@ -188,7 +188,6 @@ const CollapsibleSection = ({
     maximumFractionDigits: 0,
   }).format(total);
 
-  // Using isNegative here to conditionally style total if needed, or suppress warning
   const totalClass = isNegative ? "" : "";
 
   return (
@@ -243,40 +242,69 @@ const SimpleList = ({
   labelKey,
   isMonthly,
   isNegative,
+  limit = 5,
 }: {
   items: any[] | undefined;
   valueKey: string;
   labelKey: string;
   isMonthly?: boolean;
   isNegative?: boolean;
+  limit?: number;
 }) => {
+  const [showAll, setShowAll] = useState(false);
+
   if (!items) return null;
 
   // Sort items by value descending
   const sorted = [...items].sort((a, b) => b[valueKey] - a[valueKey]);
+  const displayItems = showAll ? sorted : sorted.slice(0, limit);
+  const hasMore = sorted.length > limit;
 
   return (
-    <ul className="space-y-2">
-      {sorted.map((item, idx) => {
-        const val = item[valueKey];
-        const formatted = new Intl.NumberFormat("en-US", {
-          style: "currency",
-          currency: "USD",
-          maximumFractionDigits: 0,
-        }).format(val);
+    <>
+      <ul className="space-y-2">
+        {displayItems.map((item, idx) => {
+          const val = item[valueKey];
+          const formatted = new Intl.NumberFormat("en-US", {
+            style: "currency",
+            currency: "USD",
+            maximumFractionDigits: 0,
+          }).format(val);
 
-        return (
-          <li key={idx} className="flex justify-between items-center text-sm">
-            <span className="text-gray-700">{item[labelKey]}</span>
-            <span
-              className={`font-medium ${isNegative ? "text-red-600" : "text-gray-900"}`}
+          return (
+            <li
+              key={idx}
+              className="flex justify-between items-center text-sm border-b border-gray-50 last:border-0 pb-2 last:pb-0"
             >
-              {formatted}
-              {isMonthly ? "/mo" : ""}
-            </span>
-          </li>
-        );
-      })}
-    </ul>
+              <span className="text-gray-700 truncate mr-4">
+                {item[labelKey]}
+              </span>
+              <span
+                className={`font-medium whitespace-nowrap ${isNegative ? "text-red-600" : "text-gray-900"}`}
+              >
+                {formatted}
+                {isMonthly ? "/mo" : ""}
+              </span>
+            </li>
+          );
+        })}
+      </ul>
+      {hasMore && (
+        <button
+          onClick={() => setShowAll(!showAll)}
+          className="mt-3 text-xs text-blue-500 hover:text-blue-700 font-medium flex items-center gap-1"
+        >
+          {showAll ? (
+            <>
+              Show Less <ChevronUp size={12} />
+            </>
+          ) : (
+            <>
+              Show {sorted.length - limit} More <ChevronDown size={12} />
+            </>
+          )}
+        </button>
+      )}
+    </>
   );
 };
