@@ -4,7 +4,7 @@
 - [ ] Fix the following build errors:
     ```text
 
-up to date, audited 313 packages in 602ms
+up to date, audited 313 packages in 382ms
 
 54 packages are looking for funding
   run `npm fund` for details
@@ -19,16 +19,14 @@ Run `npm audit` for details.
 > rocket-fi@0.1.0 build
 > tsc && vite build
 
-src/pages/RetirementGoalsPage.tsx(9,3): error TS6133: 'LineChart' is declared but its value is never read.
-src/pages/RetirementGoalsPage.tsx(10,3): error TS6133: 'Line' is declared but its value is never read.
-src/pages/SimulationDashboard.tsx(5,3): error TS6133: 'runProjection' is declared but its value is never read.
-src/pages/SimulationDashboard.tsx(15,3): error TS6133: 'Legend' is declared but its value is never read.
-src/utils/calculations.ts(3,3): error TS6133: 'Asset' is declared but its value is never read.
-src/utils/calculations.ts(4,3): error TS6133: 'Liability' is declared but its value is never read.
-src/utils/calculations.ts(5,3): error TS6133: 'InvestmentAccount' is declared but its value is never read.
-src/utils/calculations.ts(6,3): error TS6133: 'IncomeSource' is declared but its value is never read.
-src/utils/calculations.ts(7,3): error TS6133: 'Expense' is declared but its value is never read.
-src/utils/calculations.ts(76,7): error TS6133: 'liabilities' is declared but its value is never read.
+src/pages/RetirementGoalsPage.tsx(265,50): error TS1109: Expression expected.
+src/pages/RetirementGoalsPage.tsx(265,55): error TS1005: ':' expected.
+src/pages/RetirementGoalsPage.tsx(265,102): error TS1381: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+src/pages/RetirementGoalsPage.tsx(265,104): error TS1381: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+src/pages/RetirementGoalsPage.tsx(266,1): error TS1382: Unexpected token. Did you mean `{'>'}` or `&gt;`?
+src/pages/RetirementGoalsPage.tsx(268,3): error TS17002: Expected corresponding JSX closing tag for 'div'.
+src/pages/RetirementGoalsPage.tsx(269,1): error TS1005: ')' expected.
+src/pages/RetirementGoalsPage.tsx(270,1): error TS1109: Expression expected.
     ```
 
 
@@ -107,21 +105,21 @@ _General UI Requirements for all lists below: Sort items by highest value first,
 
 ## Phase 6: Calculation Engine (Retirement Goals & Simulations)
 
-- [ ] **Logic Implementation**:
-  - [ ] **Current Age**: Always derive from DOB; do not ask user to input age.
-  - [ ] **Pre-Retirement Net Worth**:
-    - [ ] Logic: Current Net Worth + (Monthly Surplus _ 12) + (Investments _ Compound Interest) - (Assets \* Depreciation).
-  - [ ] **Post-Retirement Net Worth**:
-    - [ ] Logic: (Investments _ Compound Interest) - (Added Lifestyle Expenses) - (Assets _ Depreciation).
-    - [ ] _Crucial_: Exclude "Salary" income types during this phase.
-  - [ ] **Bucket Strategy**: Implement logic to highlight 3-Bucket method (Cash / Low Risk / Growth) in projections.
-  - [ ] **Inflation**: Add global "Expected Yearly Inflation" input (Default 3%) and apply to all future value calculations.
-- [ ] **Simulations Dashboard**:
-  - [ ] **Pre-fill**: Button to "Reset/Load" parameters from real user data (Investments, Assets, etc.).
-  - [ ] **Risk Metrics**: Implement Sharpe Ratio, Sortino Ratio, Max Drawdown calculations.
-- [ ] **Visuals**:
-  - [ ] Use Pastel Color palette for all charts (avoid black/dark default themes).
-  - [ ] Ensure graphs show "Investments Only" line separate from "Total Net Worth".
+- [x] **Logic Implementation**:
+  - [x] **Current Age**: Always derive from DOB; do not ask user to input age.
+  - [x] **Pre-Retirement Net Worth**:
+    - [x] Logic: Current Net Worth + (Monthly Surplus _ 12) + (Investments _ Compound Interest) - (Assets \* Depreciation).
+  - [x] **Post-Retirement Net Worth**:
+    - [x] Logic: (Investments _ Compound Interest) - (Added Lifestyle Expenses) - (Assets _ Depreciation).
+    - [x] _Crucial_: Exclude "Salary" income types during this phase.
+  - [x] **Bucket Strategy**: Implement logic to highlight 3-Bucket method (Cash / Low Risk / Growth) in projections.
+  - [x] **Inflation**: Add global "Expected Yearly Inflation" input (Default 3%) and apply to all future value calculations.
+- [x] **Simulations Dashboard**:
+  - [x] **Pre-fill**: Button to "Reset/Load" parameters from real user data (Investments, Assets, etc.).
+  - [x] **Risk Metrics**: Implement Sharpe Ratio, Sortino Ratio, Max Drawdown calculations.
+- [x] **Visuals**:
+  - [x] Use Pastel Color palette for all charts (avoid black/dark default themes).
+  - [x] Ensure graphs show "Investments Only" line separate from "Total Net Worth".
 
 ## Phase 7: Reports & AI Agent Integration
 

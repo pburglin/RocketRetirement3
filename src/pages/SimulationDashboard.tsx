@@ -1,10 +1,6 @@
 import React, { useState } from "react";
 import { useAuth } from "../context/AuthContext";
-import {
-  calculateAge,
-  runProjection,
-  SimulationResult,
-} from "../utils/calculations";
+import { calculateAge, SimulationResult } from "../utils/calculations";
 import {
   LineChart,
   Line,
@@ -12,7 +8,6 @@ import {
   YAxis,
   CartesianGrid,
   Tooltip,
-  Legend,
   ResponsiveContainer,
 } from "recharts";
 import { RefreshCw, Play } from "lucide-react";

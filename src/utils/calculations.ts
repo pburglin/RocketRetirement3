@@ -1,11 +1,4 @@
-import {
-  UserProfile,
-  Asset,
-  Liability,
-  InvestmentAccount,
-  IncomeSource,
-  Expense,
-} from "../services/storage";
+import { UserProfile } from "../services/storage";
 
 export const calculateAge = (dob: string): number => {
   if (!dob) return 0;
@@ -60,20 +53,17 @@ export const runProjection = (
 ): SimulationResult[] => {
   const currentAge = calculateAge(user.dob || "");
   let age = currentAge;
-  let currentYear = new window.Date().getFullYear();
+  // let currentYear = new window.Date().getFullYear();
 
   // Initial Values
   let investments =
     user.investmentAccounts?.reduce((sum, i) => sum + i.balance, 0) || 0;
-  // Weighted average return or simple average? Let's do weighted for better accuracy, or simple for MVP.
-  // Let's use a conservative global assumption if individual rates aren't set, but we have them.
-  // We'll recalculate growth annually based on the specific account rates.
 
   // Clone accounts to track separate growth
   let investmentAccounts =
     user.investmentAccounts?.map((a) => ({ ...a })) || [];
   let assets = user.assets?.map((a) => ({ ...a })) || [];
-  let liabilities = user.liabilities?.map((l) => ({ ...l })) || []; // Not fully amortizing in this simple view yet, but treating as static debt payment for cashflow
+  let liabilities = user.liabilities?.map((l) => ({ ...l })) || [];
 
   const { surplus: currentMonthlySurplus } = calculateMonthlyCashFlow(user);
   let annualSurplus = currentMonthlySurplus * 12;
@@ -91,7 +81,7 @@ export const runProjection = (
 
   while (age < lifeExpectancy) {
     age++;
-    currentYear++;
+    // currentYear++;
     const isRetired = age >= retirementAge;
 
     // 1. Grow Investments
@@ -176,7 +166,7 @@ export const runProjection = (
     // Liabilities usually amortize, for MVP assume constant principal for now or simple subtraction
     // Better: We are not calculating detailed amortization schedules here yet to keep it light.
     const totalLiabilities =
-      user.liabilities?.reduce((s, l) => s + l.balance, 0) || 0;
+      liabilities.reduce((s, l) => s + l.balance, 0) || 0;
 
     results.push({
       age,
