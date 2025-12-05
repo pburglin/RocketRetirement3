@@ -140,13 +140,3 @@ build – CI/CD or build scripts
 
 - The developer will generate all images in image-manifest.json file as PNG images
 - Images are saved to `/public/assets/images` and referenced as `/assets/images/<filename>.png`
-
-### Battle Victory Flow
-
-- On victory: update resources, remove defeated creature from map via `defeatedCreatureId` and `onCreatureDefeated` props
-- Resources are passed down through props and updated at App level
-
-### Quest System
-
-- Quest rewards are handled in TownScreen modal only
-- Quest data includes acceptance/completion logic with resource rewards
