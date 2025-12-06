@@ -1,7 +1,7 @@
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
-import { LogOut, Rocket } from "lucide-react";
+import { LogOut } from "lucide-react";
 
 export const Header: React.FC = () => {
   const { user, logout } = useAuth();
@@ -18,7 +18,11 @@ export const Header: React.FC = () => {
         <div className="flex justify-between h-16">
           <div className="flex items-center">
             <Link to="/" className="flex-shrink-0 flex items-center gap-2">
-              <Rocket className="h-8 w-8 text-blue-600" />
+              <img 
+                src="/logo-img.png" 
+                alt="Rocket Fi Logo" 
+                className="h-14 w-14 object-contain"
+              />
               <span className="text-xl font-bold text-gray-900">Rocket Fi</span>
             </Link>
             <nav className="hidden md:ml-8 md:flex md:space-x-8">

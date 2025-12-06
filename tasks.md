@@ -177,3 +177,7 @@ _General UI Requirements for all lists below: Sort items by highest value first,
 ### Phase 12: Landing Page Updates
 
 - [x] **Landing Page Screenshots**: Update screenshots to use `financial-dashboard.png`, `goals.png`, `simulations.png`, and `ai-reports.png` for the System in Action section
+
+### Phase 13: UI Enhancements
+
+- [x] **Header Logo Update**: Replace Rocket icon with logo.png image in the top bar header next to "Rocket Fi" label
