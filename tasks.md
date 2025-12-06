@@ -171,3 +171,7 @@ _General UI Requirements for all lists below: Sort items by highest value first,
 ### Phase 11: FAQ Image Updates
 
 - [x] **FAQ Security Diagram**: Replace mermaid diagram for "How does it work securely?" question with `rocketfi-local-encryption-zero-knowledge.png` image
+
+### Phase 12: Landing Page Updates
+
+- [x] **Landing Page Screenshots**: Update screenshots to use `financial-dashboard.png`, `goals.png`, `simulations.png`, and `ai-reports.png` for the System in Action section

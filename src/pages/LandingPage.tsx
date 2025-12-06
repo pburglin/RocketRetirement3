@@ -12,10 +12,10 @@ import {
 import { WebGLBackground } from "../components/WebGLBackground";
 
 const SCREENSHOTS = [
-  "/1-dashboard.png",
-  "/2-projections.png",
-  "/3-simulations.png",
-  "/4-recommendations.png",
+  "/financial-dashboard.png",
+  "/goals.png",
+  "/simulations.png",
+  "/ai-reports.png",
 ];
 
 export const LandingPage: React.FC = () => {
