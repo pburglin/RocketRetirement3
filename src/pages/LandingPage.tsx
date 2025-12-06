@@ -9,6 +9,7 @@ import {
   LineChart,
   TrendingUp,
 } from "lucide-react";
+import { WebGLBackground } from "../components/WebGLBackground";
 
 const SCREENSHOTS = [
   "/1-dashboard.png",
@@ -58,6 +59,8 @@ export const LandingPage: React.FC = () => {
     <div className="bg-white">
       {/* Hero Section */}
       <div className="relative overflow-hidden bg-slate-900 text-white">
+        {/* WebGL Background Effects */}
+        <WebGLBackground />
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 text-center">
           <h1 className="text-4xl md:text-6xl font-bold tracking-tight mb-6">
             Secure, AI-Powered <br className="hidden md:block" />

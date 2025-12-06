@@ -163,3 +163,7 @@ _General UI Requirements for all lists below: Sort items by highest value first,
   - [x] **Service Worker**: Implement basic caching for offline capability.
   - [x] **iOS Optimization**: Ensure meta tags and touch icons are configured for "Add to Home Screen" on iOS.
 - [x] **Mobile Layout**: Audit all charts and tables for responsiveness on small screens.
+
+### Phase 10: Polish
+
+- [x] **Animations**: In landing page, add faint WebGL effects in the background in hero section where we show "Secure, AI-Powered Retirement Planning"
