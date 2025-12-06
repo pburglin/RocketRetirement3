@@ -167,6 +167,8 @@ _General UI Requirements for all lists below: Sort items by highest value first,
 ### Phase 10: Polish
 
 - [x] **Animations**: In landing page, add faint WebGL effects in the background in hero section where we show "Secure, AI-Powered Retirement Planning"
+- [x] **Animations**: In dashboard page, add a confetti WebGL effect when the user creates a new entry for Income, Investments, Assets, Expenses and Liabilities to motivate him to clarify his financial situation
+- [x] Note that Rocket Fi reports and insights improve the more detailed information it has. For example, instead of "401K", you can say "VOO ETF on 401K", or include more detailed breakdown of mutual funds, ETFs and stocks in the Details field. This will help Rocket Fi assess risk / reward of your current situation versus your target goals.
 
 ### Phase 11: FAQ Image Updates
 

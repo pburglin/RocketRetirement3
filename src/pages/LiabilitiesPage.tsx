@@ -284,7 +284,7 @@ const LiabilityForm: React.FC<{
       </div>
       <div>
         <label className="block text-sm font-medium text-gray-700">
-          Details (Optional)
+          Details (Optional but Recommended)
         </label>
         <textarea
           rows={3}
@@ -293,8 +293,11 @@ const LiabilityForm: React.FC<{
             setFormData({ ...formData, details: e.target.value })
           }
           className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 border p-2"
-          placeholder="Additional notes (e.g. Estimated date of payoff)..."
+          placeholder="More details = better debt analysis! Include lender name, loan terms, payoff date, collateral, etc."
         />
+        <p className="mt-1 text-xs text-gray-500">
+          💡 Detailed liability information helps Rocket Fi provide better debt management and refinancing strategies.
+        </p>
       </div>
       <div className="flex justify-end gap-2 pt-2">
         {onCancel && (

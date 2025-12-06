@@ -173,7 +173,7 @@ const IncomeForm: React.FC<{
           className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 border p-2"
         />
         <p className="mt-1 text-xs text-gray-500">
-          Use generic names like Salary, Spouse Bonus
+          Use generic names like "Company Salary" or "Spouse Bonus".
         </p>
       </div>
       <div>
@@ -217,7 +217,7 @@ const IncomeForm: React.FC<{
       </div>
       <div>
         <label className="block text-sm font-medium text-gray-700">
-          Details (Optional)
+          Details (Optional but Recommended)
         </label>
         <textarea
           rows={3}
@@ -226,8 +226,11 @@ const IncomeForm: React.FC<{
             setFormData({ ...formData, details: e.target.value })
           }
           className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 border p-2"
-          placeholder="Additional notes..."
+          placeholder="More details = better insights! Include job title, bonus structure, company match etc."
         />
+        <p className="mt-1 text-xs text-gray-500">
+          💡 Detailed information helps Rocket Fi provide better risk assessment and personalized recommendations.
+        </p>
       </div>
       <div className="flex justify-end gap-2 pt-2">
         {onCancel && (

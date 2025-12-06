@@ -213,7 +213,10 @@ const AssetForm: React.FC<{
             className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 border p-2"
           />
           <p className="mt-1 text-xs text-gray-500">
-            Use negative numbers for appreciation (e.g. -3 for 3% growth).
+            Use negative numbers for appreciation (e.g. -3 for 3% growth). Consider market conditions and location factors.
+          </p>
+          <p className="mt-1 text-xs text-blue-600 font-medium">
+            💡 Specific details in the Details field help estimate realistic depreciation/appreciation rates!
           </p>
         </div>
         <div>
@@ -237,7 +240,7 @@ const AssetForm: React.FC<{
       </div>
       <div>
         <label className="block text-sm font-medium text-gray-700">
-          Details (Optional)
+          Details (Optional but Recommended)
         </label>
         <textarea
           rows={3}
@@ -246,8 +249,11 @@ const AssetForm: React.FC<{
             setFormData({ ...formData, details: e.target.value })
           }
           className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 border p-2"
-          placeholder="Additional notes..."
+          placeholder="More details = better insights! Include property details, vehicle specifics, general location, etc."
         />
+        <p className="mt-1 text-xs text-gray-500">
+          💡 Detailed asset information helps Rocket Fi provide more accurate depreciation/appreciation estimates.
+        </p>
       </div>
       <div className="flex justify-end gap-2 pt-2">
         {onCancel && (

@@ -260,7 +260,7 @@ const ExpenseForm: React.FC<{
       </div>
       <div>
         <label className="block text-sm font-medium text-gray-700">
-          Details (Optional)
+          Details (Optional but Recommended)
         </label>
         <textarea
           rows={3}
@@ -269,8 +269,11 @@ const ExpenseForm: React.FC<{
             setFormData({ ...formData, details: e.target.value })
           }
           className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 border p-2"
-          placeholder="Additional notes..."
+          placeholder="More details = better budgeting insights! Include specific services, providers, coverage details, etc."
         />
+        <p className="mt-1 text-xs text-gray-500">
+          💡 Detailed expense information helps Rocket Fi provide better retirement lifestyle recommendations.
+        </p>
       </div>
       <div className="flex justify-end gap-2 pt-2">
         {onCancel && (
