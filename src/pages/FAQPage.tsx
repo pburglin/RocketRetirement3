@@ -1,12 +1,7 @@
-import React, { useEffect } from "react";
-import mermaid from "mermaid";
+import React from "react";
 import { HelpCircle } from "lucide-react";
 
 export const FAQPage: React.FC = () => {
-  useEffect(() => {
-    mermaid.initialize({ startOnLoad: true, theme: "neutral" });
-    mermaid.contentLoaded();
-  }, []);
 
   return (
     <div className="bg-gray-50 min-h-screen py-12">
@@ -29,8 +24,8 @@ export const FAQPage: React.FC = () => {
               3rd parties. We do not store user data; the data is stored in
               encrypted form in your local browser. The app is not yet
               monetized, but if web traffic demonstrates enough interest and
-              demand, we may consider a subscription model to help improve the
-              service.
+              demand, we may consider a subscription model to help maintain and
+              improve the service.
             </p>
           </div>
 
@@ -44,16 +39,12 @@ export const FAQPage: React.FC = () => {
               explicitly send anonymized data to the AI agent). The diagram
               below illustrates the local-first architecture:
             </p>
-            <div className="mermaid flex justify-center bg-gray-50 p-4 rounded border border-gray-200 overflow-x-auto">
-              {`
-                graph LR
-                  User((User)) -->|Inputs Data| Browser[Browser Client]
-                  Browser -->|Encrypts with Key| LocalStorage[(Local Storage)]
-                  LocalStorage -->|Returns Encrypted Data| Browser
-                  Browser -->|Decrypts with Key| View[User View]
-                  style Browser fill:#e1f5fe,stroke:#01579b
-                  style LocalStorage fill:#fff3e0,stroke:#e65100
-              `}
+            <div className="flex justify-center bg-gray-50 p-4 rounded border border-gray-200 overflow-x-auto">
+              <img 
+                src="/rocketfi-local-encryption-zero-knowledge.png" 
+                alt="RocketFi Local Encryption Zero Knowledge Architecture"
+                className="max-w-full h-auto rounded"
+              />
             </div>
           </div>
 

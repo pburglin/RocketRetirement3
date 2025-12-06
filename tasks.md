@@ -167,3 +167,7 @@ _General UI Requirements for all lists below: Sort items by highest value first,
 ### Phase 10: Polish
 
 - [x] **Animations**: In landing page, add faint WebGL effects in the background in hero section where we show "Secure, AI-Powered Retirement Planning"
+
+### Phase 11: FAQ Image Updates
+
+- [x] **FAQ Security Diagram**: Replace mermaid diagram for "How does it work securely?" question with `rocketfi-local-encryption-zero-knowledge.png` image
