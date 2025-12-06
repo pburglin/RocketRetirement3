@@ -26,6 +26,18 @@ import { SimulationDashboard } from "./pages/SimulationDashboard";
 import { ReportsInsightsPage } from "./pages/ReportsInsightsPage";
 import { useAuth } from "./context/AuthContext";
 
+// Component to handle scrolling to "how-it-works" section
+const HowItWorksScroll: React.FC = () => {
+  React.useEffect(() => {
+    const element = document.getElementById("how-it-works");
+    if (element) {
+      element.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  }, []);
+
+  return <LandingPage />;
+};
+
 // Protected Route Component
 const ProtectedRoute: React.FC<{ children: React.ReactElement }> = ({
   children,
@@ -77,10 +89,8 @@ function App() {
             <Routes>
               {/* Public Routes */}
               <Route path="/" element={<LandingPage />} />
-              <Route
-                path="/how-it-works"
-                element={<Navigate to="/\#how-it-works" replace />}
-              />
+              <Route path="/how-it-works" element={<HowItWorksScroll />} />
+
               <Route path="/privacy" element={<PrivacyPolicyPage />} />
               <Route path="/faq" element={<FAQPage />} />
 
