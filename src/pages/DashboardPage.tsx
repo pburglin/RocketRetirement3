@@ -16,7 +16,10 @@ import {
   Activity,
   ArrowUpCircle,
   ArrowDownCircle,
+  Users,
+  Calendar,
 } from "lucide-react";
+import { SocialSecurity } from "../services/storage";
 
 export const DashboardPage: React.FC = () => {
   const { user } = useAuth();
@@ -111,7 +114,7 @@ export const DashboardPage: React.FC = () => {
         <h2 className="text-lg font-semibold text-gray-700 mb-3">
           Quick Actions
         </h2>
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-6 gap-4">
           <QuickLink
             to="/income"
             label="Income"
@@ -136,6 +139,11 @@ export const DashboardPage: React.FC = () => {
             to="/liabilities"
             label="Liabilities"
             icon={<TrendingUp className="text-orange-600" />}
+          />
+          <QuickLink
+            to="/social-security"
+            label="Social Security"
+            icon={<Users className="text-indigo-600" />}
           />
         </div>
       </div>
@@ -226,8 +234,108 @@ export const DashboardPage: React.FC = () => {
             isNegative
           />
         </CollapsibleSection>
+
+        {/* 6. Social Security */}
+        <CollapsibleSection
+          title="Social Security"
+          count={user.socialSecurity?.length || 0}
+          total={
+            user.socialSecurity?.reduce(
+              (sum, item) => sum + item.monthlyAmount + (item.spousalAmount || 0),
+              0,
+            ) || 0
+          }
+          path="/social-security"
+        >
+          <SocialSecurityList items={user.socialSecurity} />
+        </CollapsibleSection>
       </div>
     </div>
+  );
+};
+
+const SocialSecurityList = ({ items }: { items: SocialSecurity[] | undefined }) => {
+  const [showAll, setShowAll] = useState(false);
+  const limit = 3;
+
+  if (!items) return null;
+
+  // Sort items by total benefit amount (primary + spousal)
+  const sorted = [...items].sort((a, b) => 
+    (b.monthlyAmount + (b.spousalAmount || 0)) - (a.monthlyAmount + (a.spousalAmount || 0))
+  );
+  const displayItems = showAll ? sorted : sorted.slice(0, limit);
+  const hasMore = sorted.length > limit;
+
+  return (
+    <>
+      <ul className="space-y-2">
+        {displayItems.map((item, idx) => {
+          const totalAmount = item.monthlyAmount + (item.spousalAmount || 0);
+          const formatted = new Intl.NumberFormat("en-US", {
+            style: "currency",
+            currency: "USD",
+            maximumFractionDigits: 0,
+          }).format(totalAmount);
+
+          return (
+            <li
+              key={idx}
+              className="flex justify-between items-center text-sm border-b border-gray-50 last:border-0 pb-2 last:pb-0"
+            >
+              <div className="flex flex-col">
+                <span className="text-gray-700 capitalize">
+                  {item.person === "self" ? "Your Benefits" : "Spouse Benefits"}
+                  {item.hasSpouse && item.person === "self" && item.spousalAmount && (
+                    <span className="ml-2 px-1.5 py-0.5 rounded-full bg-blue-100 text-blue-700 text-xs">
+                      + Spousal
+                    </span>
+                  )}
+                </span>
+                <div className="flex items-center gap-3 mt-1">
+                  <span className="text-xs text-gray-400 flex items-center gap-1">
+                    <Calendar size={12} />
+                    Age {item.startAge}
+                  </span>
+                  <span className="text-xs text-gray-400">
+                    ${item.monthlyAmount.toLocaleString()}/mo base
+                  </span>
+                  {item.spousalAmount && (
+                    <span className="text-xs text-gray-400">
+                      +${item.spousalAmount.toLocaleString()}/mo spousal
+                    </span>
+                  )}
+                </div>
+                {item.notes && (
+                  <span className="text-xs text-gray-400 truncate max-w-[250px] mt-1">
+                    {item.notes}
+                  </span>
+                )}
+              </div>
+              <span className="font-medium text-green-600 whitespace-nowrap">
+                {formatted}/mo
+              </span>
+            </li>
+          );
+        })}
+      </ul>
+      {hasMore && (
+        <button
+          onClick={() => setShowAll(!showAll)}
+          className="mt-3 text-xs text-blue-500 hover:text-blue-700 font-medium flex items-center gap-1"
+        >
+          {showAll ? (
+            <>
+              Show Less <ChevronUp size={12} />
+            </>
+          ) : (
+            <>
+              Show {sorted.length - limit} More <ChevronDown size={12} />
+            </>
+          )}
+        </button>
+      )}
+    </>
   );
 };
 

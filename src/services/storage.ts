@@ -64,6 +64,18 @@ export interface InvestmentAccount {
   details?: string;
 }
 
+export interface SocialSecurity {
+  id: string;
+  name: string;
+  person: "self" | "spouse";
+  hasSpouse: boolean;
+  startAge: number;
+  monthlyAmount: number;
+  spousalBenefits: boolean;
+  spousalAmount?: number;
+  notes?: string;
+}
+
 export interface UserProfile {
   username: string;
   createdAt: string;
@@ -81,6 +93,7 @@ export interface UserProfile {
   assets?: Asset[];
   liabilities?: Liability[];
   investmentAccounts?: InvestmentAccount[];
+  socialSecurity?: SocialSecurity[];
 
   // Settings
   theme?: "light" | "dark";

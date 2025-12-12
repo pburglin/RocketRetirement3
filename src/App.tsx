@@ -20,6 +20,7 @@ import { ExpensesPage } from "./pages/ExpensesPage";
 import { AssetsPage } from "./pages/AssetsPage";
 import { LiabilitiesPage } from "./pages/LiabilitiesPage";
 import { InvestmentsPage } from "./pages/InvestmentsPage";
+import { SocialSecurityPage } from "./pages/SocialSecurityPage";
 import { DashboardPage } from "./pages/DashboardPage";
 import { RetirementGoalsPage } from "./pages/RetirementGoalsPage";
 import { SimulationDashboard } from "./pages/SimulationDashboard";
@@ -154,6 +155,14 @@ function App() {
                 element={
                   <ProtectedRoute>
                     <InvestmentsPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/social-security"
+                element={
+                  <ProtectedRoute>
+                    <SocialSecurityPage />
                   </ProtectedRoute>
                 }
               />

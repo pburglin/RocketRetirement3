@@ -1,5 +1,27 @@
 import { UserProfile, Timeframe } from "../services/storage";
 
+// Helper function to calculate if social security benefits are active
+export const calculateSocialSecurityIncome = (
+  user: UserProfile,
+  age: number,
+  inflationRate: number,
+  currentAge: number
+): number => {
+  if (!user.socialSecurity) return 0;
+  
+  const yearsPassed = age - currentAge;
+  const inflationFactor = Math.pow(1 + inflationRate / 100, yearsPassed);
+  
+  return user.socialSecurity.reduce((total, ss) => {
+    if (age >= ss.startAge) {
+      const baseAmount = ss.monthlyAmount + (ss.spousalAmount || 0);
+      const inflatedAmount = baseAmount * inflationFactor;
+      return total + inflatedAmount;
+    }
+    return total;
+  }, 0) * 12; // Convert to annual amount
+};
+
 export const calculateAge = (dob: string): number => {
   if (!dob) return 0;
   const birthDate = new window.Date(dob);
@@ -86,6 +108,9 @@ export const runProjection = (
         ?.filter((i) => isActive(i.category, isRetired))
         .reduce((sum, i) => sum + i.amount * 12, 0) || 0;
 
+    // Add Social Security benefits when applicable
+    const socialSecurityIncome = calculateSocialSecurityIncome(user, age, inflationRate, currentAge);
+
     const listExpenses =
       user.expenses
         ?.filter((e) => isActive(e.timeframe, isRetired))
@@ -121,7 +146,7 @@ export const runProjection = (
     const yearsPassed = age - currentAge;
     const inflationFactor = Math.pow(1 + inflationRate / 100, yearsPassed);
 
-    const inflatedIncome = activeIncome * inflationFactor;
+    const inflatedIncome = (activeIncome + socialSecurityIncome) * inflationFactor;
 
     let currentYearExpenses = 0;
     if (isRetired) {
@@ -224,14 +249,25 @@ export const runProjection = (
 };
 
 export const calculateMonthlyCashFlow = (user: UserProfile) => {
+  const currentAge = calculateAge(user.dob || "");
   const income = user.incomeSources?.reduce((sum, item) => sum + item.amount, 0) || 0;
+  
+  // Add current social security benefits if user is old enough
+  let socialSecurityIncome = 0;
+  if (user.socialSecurity && user.socialSecurity.length > 0) {
+    socialSecurityIncome = user.socialSecurity
+      .filter(ss => currentAge >= ss.startAge)
+      .reduce((sum, ss) => sum + ss.monthlyAmount + (ss.spousalAmount || 0), 0);
+  }
+  
   const expenses = user.expenses?.reduce((sum, item) => sum + item.amount, 0) || 0;
   const liabilityPayments = user.liabilities?.reduce((sum, item) => sum + (item.monthlyPayment || 0), 0) || 0;
   const totalExpenses = expenses + liabilityPayments;
-  const surplus = income - totalExpenses;
+  const totalIncome = income + socialSecurityIncome;
+  const surplus = totalIncome - totalExpenses;
   
   return {
-    income,
+    income: totalIncome,
     expenses: totalExpenses,
     surplus,
   };
