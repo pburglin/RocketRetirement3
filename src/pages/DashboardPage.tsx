@@ -19,7 +19,7 @@ import {
   Users,
   Calendar,
 } from "lucide-react";
-import { SocialSecurity } from "../services/storage";
+import { SocialSecurity, Expense } from "../services/storage";
 
 export const DashboardPage: React.FC = () => {
   const { user } = useAuth();
@@ -200,22 +200,37 @@ export const DashboardPage: React.FC = () => {
         {/* 4. Expenses */}
         <CollapsibleSection
           title="Expenses"
-          count={user.expenses?.length || 0}
+          count={(user.expenses?.filter(e => !e.isOneTime)?.length || 0)}
           total={
-            user.expenses?.reduce((sum, item) => sum + item.amount, 0) || 0
+            (user.expenses?.filter(e => !e.isOneTime)?.reduce((sum, item) => sum + item.amount, 0) || 0)
           }
           path="/expenses"
           isMonthly
           isNegative
         >
           <SimpleList
-            items={user.expenses}
+            items={user.expenses?.filter(e => !e.isOneTime)}
             valueKey="amount"
             labelKey="name"
             isMonthly
             isNegative
           />
         </CollapsibleSection>
+
+        {/* 4b. One-Time Future Expenses */}
+        {user.expenses?.some(e => e.isOneTime) && (
+          <CollapsibleSection
+            title="One-Time Future Expenses"
+            count={user.expenses?.filter(e => e.isOneTime)?.length || 0}
+            total={
+              (user.expenses?.filter(e => e.isOneTime)?.reduce((sum, item) => sum + item.amount, 0) || 0)
+            }
+            path="/expenses"
+            isNegative
+          >
+            <OneTimeExpenseList items={user.expenses?.filter(e => e.isOneTime)} />
+          </CollapsibleSection>
+        )}
 
         {/* 5. Liabilities */}
         <CollapsibleSection
@@ -532,6 +547,90 @@ const SimpleList = ({
               >
                 {formatted}
                 {isMonthly ? "/mo" : ""}
+              </span>
+            </li>
+          );
+        })}
+      </ul>
+      {hasMore && (
+        <button
+          onClick={() => setShowAll(!showAll)}
+          className="mt-3 text-xs text-blue-500 hover:text-blue-700 font-medium flex items-center gap-1"
+        >
+          {showAll ? (
+            <>
+              Show Less <ChevronUp size={12} />
+            </>
+          ) : (
+            <>
+              Show {sorted.length - limit} More <ChevronDown size={12} />
+            </>
+          )}
+        </button>
+      )}
+    </>
+  );
+};
+
+// Component to display one-time future expenses
+const OneTimeExpenseList = ({ items }: { items: Expense[] | undefined }) => {
+  const [showAll, setShowAll] = useState(false);
+  const limit = 3;
+
+  if (!items || items.length === 0) return null;
+
+  // Sort by scheduled date
+  const sorted = [...items].sort((a, b) => {
+    if (!a.scheduledDate) return 1;
+    if (!b.scheduledDate) return -1;
+    return new Date(a.scheduledDate).getTime() - new Date(b.scheduledDate).getTime();
+  });
+  const displayItems = showAll ? sorted : sorted.slice(0, limit);
+  const hasMore = sorted.length > limit;
+
+  return (
+    <>
+      <ul className="space-y-2">
+        {displayItems.map((item) => {
+          const formatted = new Intl.NumberFormat("en-US", {
+            style: "currency",
+            currency: "USD",
+            maximumFractionDigits: 0,
+          }).format(item.amount);
+
+          return (
+            <li
+              key={item.id}
+              className="flex justify-between items-center text-sm border-b border-gray-50 last:border-0 pb-2 last:pb-0"
+            >
+              <div className="flex flex-col">
+                <span className="text-gray-700 truncate mr-4">
+                  {item.name}
+                </span>
+                <div className="flex items-center gap-3 mt-1">
+                  <span className="px-2 py-0.5 rounded-full bg-amber-100 text-amber-800 text-xs">
+                    One-time
+                  </span>
+                  {item.scheduledDate && (
+                    <span className="text-xs text-gray-400 flex items-center gap-1">
+                      <Calendar size={12} />
+                      {new Date(item.scheduledDate).toLocaleDateString()}
+                    </span>
+                  )}
+                  {item.isCompleted && (
+                    <span className="px-2 py-0.5 rounded-full bg-green-100 text-green-800 text-xs">
+                      ✓ Completed
+                    </span>
+                  )}
+                </div>
+                {item.details && (
+                  <span className="text-xs text-gray-400 truncate max-w-[200px] mt-1">
+                    {item.details}
+                  </span>
+                )}
+              </div>
+              <span className="font-medium text-amber-600 whitespace-nowrap">
+                {formatted}
               </span>
             </li>
           );

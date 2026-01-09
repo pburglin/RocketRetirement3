@@ -284,7 +284,9 @@ export const calculateMonthlyCashFlow = (user: UserProfile) => {
       .reduce((sum, ss) => sum + ss.monthlyAmount + (ss.spousalAmount || 0), 0);
   }
   
-  const expenses = user.expenses?.reduce((sum, item) => sum + item.amount, 0) || 0;
+  // Only include recurring expenses (not one-time) in monthly calculation
+  const recurringExpenses = user.expenses?.filter(e => !e.isOneTime) || [];
+  const expenses = recurringExpenses.reduce((sum, item) => sum + item.amount, 0);
   const liabilityPayments = user.liabilities?.reduce((sum, item) => sum + (item.monthlyPayment || 0), 0) || 0;
   const totalExpenses = expenses + liabilityPayments;
   const totalIncome = income + socialSecurityIncome;
@@ -294,5 +296,6 @@ export const calculateMonthlyCashFlow = (user: UserProfile) => {
     income: totalIncome,
     expenses: totalExpenses,
     surplus,
+    oneTimeExpenses: user.expenses?.filter(e => e.isOneTime) || [],
   };
 };
