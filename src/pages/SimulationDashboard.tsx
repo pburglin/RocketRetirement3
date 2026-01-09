@@ -61,14 +61,28 @@ export const SimulationDashboard: React.FC = () => {
       for (let i = 0; i < iterations; i++) {
         const run: SimulationResult[] = [];
         let age = currentAge;
-        let invest =
-          user.investmentAccounts?.reduce((sum, a) => sum + a.balance, 0) || 0;
+        
+        // Calculate initial investment (include assets like runProjection does)
+        const initialInvestments = user.investmentAccounts?.reduce((sum, a) => sum + a.balance, 0) || 0;
+        const initialAssets = user.assets?.reduce((sum, a) => sum + a.value, 0) || 0;
+        const initialLiabilities = user.liabilities?.reduce((sum, l) => sum + l.balance, 0) || 0;
+        let invest = initialInvestments + initialAssets - initialLiabilities;
 
-        const income =
-          user.incomeSources?.reduce((s, i) => s + i.amount, 0) || 0;
-        const expenses = user.expenses?.reduce((s, e) => s + e.amount, 0) || 0;
+        // Only include recurring expenses (not one-time) in monthly surplus calculation
+        const recurringExpenses = user.expenses?.filter(e => !e.isOneTime) || [];
+        const income = user.incomeSources?.reduce((s, i) => s + i.amount, 0) || 0;
+        const expenses = recurringExpenses.reduce((s, e) => s + e.amount, 0) || 0;
+        const liabilityPayments = user.liabilities?.reduce((s, l) => s + (l.monthlyPayment || 0), 0) || 0;
         const totalMonthlySurplus = income - expenses;
         let annualAddition = totalMonthlySurplus * 12;
+
+        // Social Security (simplified - assume same as Goals projection)
+        const socialSecurityAmount = user.socialSecurity?.reduce((total, ss) => {
+          if (currentAge >= ss.startAge) {
+            return total + ss.monthlyAmount + (ss.spousalAmount || 0);
+          }
+          return total;
+        }, 0) || 0;
 
         const spending = annualRetirementSpending;
         const infl = inflationRate;
@@ -99,11 +113,12 @@ export const SimulationDashboard: React.FC = () => {
             invest += annualAddition;
             annualAddition *= 1 + infl / 100;
           } else {
-            // Withdraw
+            // Withdraw for retirement spending + liability payments
             const yearsSinceStart = age - currentAge;
-            const inflatedSpending =
-              spending * Math.pow(1 + infl / 100, yearsSinceStart);
-            invest -= inflatedSpending;
+            const inflatedSpending = spending * Math.pow(1 + infl / 100, yearsSinceStart);
+            const inflatedLiabilityPayments = liabilityPayments * 12 * Math.pow(1 + infl / 100, yearsSinceStart);
+            const socialSecurityThisYear = socialSecurityAmount * 12 * Math.pow(1 + infl / 100, yearsSinceStart);
+            invest = invest - inflatedSpending - inflatedLiabilityPayments + socialSecurityThisYear;
           }
 
           // Stop at zero for simpler graph viz (bankruptcy)

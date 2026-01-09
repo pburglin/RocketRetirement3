@@ -191,3 +191,4 @@ _General UI Requirements for all lists below: Sort items by highest value first,
   - [x] Update renderItem to display one-time expense info (date, completed status)
   - [x] Fix RetirementGoalsPage to exclude one-time expenses from default annual retirement spending calculation
   - [x] Fix runProjection to properly handle one-time expense age calculation and track paid expenses
+  - [x] Fix Monte Carlo simulation to include assets in net worth, exclude one-time expenses, and add Social Security income
