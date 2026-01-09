@@ -124,14 +124,13 @@ export const runProjection = (
     // Calculate one-time expenses that occur this year
     const oneTimeExpensesThisYear = user.expenses?.reduce((sum, e) => {
       if (e.isOneTime && e.scheduledDate && !paidOneTimeExpenses.includes(e.id)) {
-        const scheduledDate = new Date(e.scheduledDate);
         const birthDate = new Date(user.dob || "");
-        const scheduledAge = scheduledDate.getFullYear() - birthDate.getFullYear();
+        const scheduledAge = new Date(e.scheduledDate).getFullYear() - birthDate.getFullYear();
         
-        // Check if this expense should be paid in the current age year
-        if (scheduledAge === age - currentAge || (age === scheduledAge + currentAge)) {
+        // Check if this expense should be paid at the current age
+        if (scheduledAge === age) {
           const yearsPassed = age - currentAge;
-          const inflatedAmount = e.amount * Math.pow(1 + inflationRate / 100, yearsPassed);
+          const inflatedAmount = e.amount * Math.pow(1 + inflationRate / 100, Math.max(0, yearsPassed));
           paidOneTimeExpenses.push(e.id);
           return sum + inflatedAmount;
         }
