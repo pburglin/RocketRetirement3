@@ -88,6 +88,9 @@ export const runProjection = (
   const initialAssets = assets.reduce((s, a) => s + a.value, 0);
   const initialLiabilities = liabilities.reduce((s, l) => s + l.balance, 0);
 
+  // Track one-time expenses that have been paid
+  const paidOneTimeExpenses: string[] = [];
+
   // Add initial state
   results.push({
     age,
@@ -111,10 +114,30 @@ export const runProjection = (
     // Add Social Security benefits when applicable
     const socialSecurityIncome = calculateSocialSecurityIncome(user, age, inflationRate, currentAge);
 
+    // Filter out one-time expenses from recurring expenses
+    const recurringExpenses = user.expenses?.filter(e => !e.isOneTime) || [];
     const listExpenses =
-      user.expenses
-        ?.filter((e) => isActive(e.timeframe, isRetired))
+      recurringExpenses
+        .filter((e) => isActive(e.timeframe, isRetired))
         .reduce((sum, e) => sum + e.amount * 12, 0) || 0;
+
+    // Calculate one-time expenses that occur this year
+    const oneTimeExpensesThisYear = user.expenses?.reduce((sum, e) => {
+      if (e.isOneTime && e.scheduledDate && !paidOneTimeExpenses.includes(e.id)) {
+        const scheduledDate = new Date(e.scheduledDate);
+        const birthDate = new Date(user.dob || "");
+        const scheduledAge = scheduledDate.getFullYear() - birthDate.getFullYear();
+        
+        // Check if this expense should be paid in the current age year
+        if (scheduledAge === age - currentAge || (age === scheduledAge + currentAge)) {
+          const yearsPassed = age - currentAge;
+          const inflatedAmount = e.amount * Math.pow(1 + inflationRate / 100, yearsPassed);
+          paidOneTimeExpenses.push(e.id);
+          return sum + inflatedAmount;
+        }
+      }
+      return sum;
+    }, 0) || 0;
 
     const activeLiabilityPayments =
       liabilities
@@ -156,7 +179,8 @@ export const runProjection = (
       currentYearExpenses = listExpenses * inflationFactor;
     }
 
-    const totalOutflow = currentYearExpenses + activeLiabilityPayments;
+    // Add one-time expenses to outflow
+    const totalOutflow = currentYearExpenses + activeLiabilityPayments + oneTimeExpensesThisYear;
     const grossSurplus = inflatedIncome - totalOutflow;
 
     // Subtract specific contributions already made to investments
