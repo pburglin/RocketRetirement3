@@ -189,3 +189,5 @@ _General UI Requirements for all lists below: Sort items by highest value first,
   - [x] Add one-time expense suggestions (New Roof, New Car, Child's Wedding, Family Trip)
   - [x] Update ExpenseForm with one-time expense toggle and scheduled date picker
   - [x] Update renderItem to display one-time expense info (date, completed status)
+  - [x] Fix RetirementGoalsPage to exclude one-time expenses from default annual retirement spending calculation
+  - [x] Fix runProjection to properly handle one-time expense age calculation and track paid expenses

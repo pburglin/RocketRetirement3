@@ -30,7 +30,7 @@ export const RetirementGoalsPage: React.FC = () => {
     if (user) {
       // Default spending could be current expenses * 12
       const currentAnnualExpenses =
-        (user.expenses?.reduce((sum, e) => sum + e.amount, 0) || 0) * 12;
+        (user.expenses?.filter(e => !e.isOneTime).reduce((sum, e) => sum + e.amount, 0) || 0) * 12;
       if (annualRetirementSpending === 60000 && currentAnnualExpenses > 0) {
         updateAssumption('annualRetirementSpending', currentAnnualExpenses);
       }
