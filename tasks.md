@@ -181,3 +181,11 @@ _General UI Requirements for all lists below: Sort items by highest value first,
 ### Phase 13: UI Enhancements
 
 - [x] **Header Logo Update**: Replace Rocket icon with logo.png image in the top bar header next to "Rocket Fi" label
+
+### Phase 14: Future One-Time Expenses
+
+- [x] **Scheduled One-Time Expenses**: Add ability for user to schedule future one-time expenses (e.g., new roof, new car, wedding, family trip)
+  - [x] Add `isOneTime`, `scheduledDate`, and `isCompleted` fields to Expense type
+  - [x] Add one-time expense suggestions (New Roof, New Car, Child's Wedding, Family Trip)
+  - [x] Update ExpenseForm with one-time expense toggle and scheduled date picker
+  - [x] Update renderItem to display one-time expense info (date, completed status)

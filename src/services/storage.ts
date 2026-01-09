@@ -22,10 +22,14 @@ export interface IncomeSource {
 export interface Expense {
   id: string;
   name: string;
-  amount: number; // Monthly
+  amount: number; // Monthly for recurring, one-time amount for one-time
   retirementCategory: "Required" | "Nice-to-have"; // Priority
   timeframe: Timeframe;
   details?: string;
+  // One-time expense fields
+  isOneTime?: boolean;
+  scheduledDate?: string; // ISO date format for one-time expenses
+  isCompleted?: boolean; // Track if one-time expense has been paid
 }
 
 export interface Asset {
